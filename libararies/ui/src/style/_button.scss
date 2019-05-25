@@ -1,0 +1,25 @@
+@mixin button-reset {
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow: hidden;
+
+  // The `outline: none` from above works on all browsers, however Firefox also
+  // adds a special `focus-inner` which we have to disable explicitly. See:
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#Firefox
+  &::-moz-focus-inner {
+    border: 0;
+  }
+}
+
+$button-small-size: 24px;
+$button-normal-size: 32px;
+$button-big-size: 50px;
+$button-border-radius: 4px;
+
+@function calc-button-padding($size) {
+  @return $size / 1.5;
+}

@@ -1,0 +1,32 @@
+@import "../style/theming";
+@import "../style/typography";
+
+@mixin ui-menu-theme($theme) {
+  $background: map-get($theme, background);
+  $foreground: map-get($theme, foreground);
+
+  .Menu {
+    &__panel {
+      background: theming-color($background, 'card');
+      box-shadow: 0 2px 6px 0 rgba(0,0,33,.16);
+    }
+  }
+
+  .MenuItem {
+    background: transparent;
+    color: theming-color($foreground, 'text');
+
+    &[disabled] {
+      color: theming-color($foreground, 'disabled');
+    }
+  }
+
+  .MenuItem:hover,
+  .MenuItem.cdk-program-focused,
+  .MenuItem.cdk-keyboard-focused,
+  .MenuItem--highlighted {
+    &:not([disabled]) {
+      background: theming-color($background, 'hover');
+    }
+  }
+}

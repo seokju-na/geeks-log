@@ -1,0 +1,45 @@
+@import "./mixins";
+
+/** The mixins below are shared between ui-menu and ui-select */
+
+// menu width must be a multiple of 56px
+$menu-overlay-min-width: 112px !default;   // 56 * 2
+$menu-overlay-max-width: 280px !default;   // 56 * 5
+
+$menu-item-height: 32px !default;
+$menu-side-padding: 10px !default;
+$menu-icon-margin: 6px !default;
+
+
+@mixin menu-base() {
+  min-width: $menu-overlay-min-width;
+  max-width: $menu-overlay-max-width;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;   // for momentum scroll on mobile
+}
+
+@mixin menu-item-base() {
+  @include truncate-line();
+
+  // Needs to be a block for the ellipsis to work.
+  display: block;
+  line-height: $menu-item-height;
+  height: $menu-item-height;
+  padding: 0 $menu-side-padding;
+
+  text-align: left;
+  text-decoration: none;   // necessary to reset anchor tags
+
+  // Required for Edge not to show scrollbars when setting the width manually. See #12112.
+  max-width: 100%;
+
+  &[disabled] {
+    cursor: default;
+  }
+
+  .Icon {
+    margin-right: $menu-icon-margin;
+    vertical-align: middle;
+    line-height: $menu-item-height;
+  }
+}

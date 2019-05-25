@@ -1,0 +1,11 @@
+@import "./style/core";
+@import "./button/button-theme";
+@import "./styles";
+
+@include ui-core();
+
+html {
+  @include patch-html-and-body($basic-light-theme);
+}
+
+@include ui-all-theme($basic-light-theme);

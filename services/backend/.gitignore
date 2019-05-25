@@ -1,0 +1,8 @@
+dist/
+node_modules/
+*.log
+src/environment/configs/*.config.ts
+src/environment/configs/*.json
+!src/environment/configs/local.config.ts
+!src/environment/configs/test.config.ts
+coverage/

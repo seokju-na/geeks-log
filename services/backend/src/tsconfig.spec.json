@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": [
+      "node",
+      "jest"
+    ]
+  },
+  "include": [
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "src/testing/",
+    "**/*Dummy.ts"
+  ]
+}

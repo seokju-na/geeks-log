@@ -1,0 +1,17 @@
+@import "../src/styles";
+@import "../icon-font/out/GeeksLogIcon.css";
+
+@import "../node_modules/@angular/cdk/a11y-prebuilt.css";
+@import "../node_modules/@angular/cdk/overlay-prebuilt.css";
+
+@include ui-core();
+
+.BasicLightTheme {
+  @include patch-html-and-body($basic-light-theme);
+  @include ui-all-theme($basic-light-theme);
+}
+
+.BasicDarkTheme {
+  @include patch-html-and-body($basic-dark-theme);
+  @include ui-all-theme($basic-dark-theme);
+}

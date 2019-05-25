@@ -1,0 +1,6 @@
+@import "../theming";
+
+$basic-light-primary: theming-palette($color-blue);
+$basic-light-accent: theming-palette($color-blue-grey, A200, A100, A400);
+
+$basic-light-theme: theming-light-theme($basic-light-primary, $basic-light-accent);

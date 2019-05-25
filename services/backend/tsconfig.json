@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "sourceRoot": "src/",
+    "outDir": "dist/",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "es2017",
+    "typeRoots": [
+      "node_modules/@types/",
+      "types/"
+    ],
+    "lib": [
+      "es2017"
+    ]
+  },
+  "exclude": [
+    "node_modules/"
+  ]
+}

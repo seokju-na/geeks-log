@@ -1,0 +1,16 @@
+@import "../style/theming";
+
+@mixin ui-icon-theme($theme) {
+  $primary: map-get($theme, primary);
+  $warn: map-get($theme, warn);
+
+  .Icon {
+    &--color-primary {
+      color: theming-color($primary);
+    }
+
+    &--color-warn {
+      color: theming-color($warn);
+    }
+  }
+}

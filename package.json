@@ -1,0 +1,12 @@
+{
+  "name": "geeks-log",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/seokju-na/geeks-log.git",
+  "author": {
+    "name": "Seokju Na",
+    "email": "seokju.me@gmail.com"
+  },
+  "license": "MIT",
+  "private": true
+}

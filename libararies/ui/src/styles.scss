@@ -1,0 +1,11 @@
+@import "./style/core";
+@import "./button/button-theme";
+@import "./icon/icon-theme";
+@import "./menu/menu-theme";
+@import "./dialog/dialog-theme";
+
+@mixin ui-all-theme($theme) {
+  @include ui-button-theme($theme);
+  @include ui-icon-theme($theme);
+  @include ui-menu-theme($theme);
+}

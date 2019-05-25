@@ -1,0 +1,42 @@
+@import "../style/menu";
+@import "../style/button";
+@import "../style/typography";
+
+$menu-vertical-padding: 4px !default;
+$menu-border-radius: 4px !default;
+
+.Menu {
+  &__panel {
+    @include menu-base;
+    max-height: calc(100vh - #{$menu-item-height});
+    border-radius: $menu-border-radius;
+    outline: 0;
+
+    // Prevent users from interacting with the panel while it's animating. Note that
+    // people won't be able to click through it, because the overlay pane will catch the click.
+    // This fixes the following issues:
+    //  * Users accidentally opening sub-menus when the `overlapTrigger` option is enabled.
+    //  * Users accidentally tapping on content inside the sub-menu on touch devices, if the
+    //    sub-menu overlaps the trigger. The issue is due to touch devices emulating the
+    //    `mouseenter` event by dispatching it on tap.
+    &.ng-animating {
+      pointer-events: none;
+    }
+  }
+
+  &__content {
+    &:not(:empty) {
+      padding-top: $menu-vertical-padding;
+      padding-bottom: $menu-vertical-padding;
+    }
+  }
+}
+
+.MenuItem {
+  @include button-reset();
+  @include menu-item-base();
+  width: 100%;
+
+  font-family: $font-family-display-sans-serif;
+  font-size: $font-normal-size;
+}
