@@ -5,4 +5,4 @@ steps:
   - task: NodeTool@0
     inputs:
       versionSpec: '10.15.3'
-  - script: cd services/backend/ && yarn install && yarn test
+  - script: cd services/backend/ && yarn install && yarn lint && yarn test
