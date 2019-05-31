@@ -1,142 +1,266 @@
-import axios, { AxiosInstance } from 'axios';
-import { BehaviorSubject, from } from 'rxjs';
-import { concatMap, last, map, scan, tap } from 'rxjs/operators';
+/// <reference path="../../../node_modules/event-store-client/event-store-client.d.ts"/>
+import {
+  Connection,
+  Event as GYEvent,
+  ICredentials,
+  IReadStreamEventsCompleted,
+  IWriteEventsCompleted,
+  OperationResult,
+  ReadStreamResult,
+} from 'event-store-client';
+import { EMPTY, Observable } from 'rxjs';
+import { expand, last, map, scan, timeout } from 'rxjs/operators';
 import Event from '../../domain/seed-work/Event';
 import generateUniqueId from '../../domain/shared/utils/generateUniqueId';
 import toPromise from '../../utils/toPromise';
-import EventStore, { SaveOptions as BaseSaveOptions } from './EventStore';
+import EventStore, {
+  ExpectedVersion,
+  GetOptions,
+  SaveOptions as BaseSaveOptions,
+} from './EventStore';
+import throwStreamDeletedException from './exceptions/throwStreamDeletedException';
+import throwStreamNotFoundException from './exceptions/throwStreamNotFoundException';
 
-interface WriteEventPayload {
-  eventId: string;
-  eventType: string;
-  data: object;
-  metadata?: object;
+const noop = () => {
+};
+
+interface InternalSingleReadOptions {
+  /**
+   * The maximum number of events to return (counting up from fromEventNumber)
+   * @default 100
+   */
+  maxCount?: number;
+  /**
+   * If links to events from other streams should be resolved (ie: for events re-published by a
+   * projection)
+   * @default true
+   */
+  resolveLinkTos?: boolean;
+  /**
+   * If this request must be processed by the master server in the cluster
+   * @default false
+   */
+  requireMaster?: boolean;
+  timeout?: number;
 }
 
-type WriteEventsPayload = WriteEventPayload[];
+interface InternalMultipleReadOptions {
+  /**
+   * The maximum number of events to return (counting up from fromEventNumber)
+   * @default 100
+   */
+  pageSize?: number;
+  eachTimeout?: number;
+  totalTimeout?: number;
+}
+
+interface InternalWriteOptions {
+  expectedVersion?: number;
+  /**
+   * If this request must be processed by the master server in the cluster
+   * @default false
+   */
+  requireMaster?: boolean;
+}
 
 export interface SaveOptions extends BaseSaveOptions {
 }
 
 interface ConstructOptions {
-  url: string;
+  connectOptions?: {
+    /**
+     * The domain name or IP address of the Event Store server.
+     * @default localhost
+     */
+    host?: string;
+    /**
+     * The port number to use
+     * @default 1113
+     */
+    port?: number;
+    /**
+     * @default false
+     */
+    debug?: boolean;
+  };
+  credentials: ICredentials;
 }
-
-// Response types
-interface Author {
-  name: string;
-}
-
-type StreamLinkRelation = 'self' | 'first' | 'last' | 'previous' | 'next' | 'metadata';
-type EventLinkRelation = 'edit' | 'alternate';
-
-interface StreamLink {
-  uri: string;
-  relation: StreamLinkRelation;
-}
-
-interface EventLink {
-  uri: string;
-  relation: EventLinkRelation;
-}
-
-export interface GYStream {
-  title: string;
-  id: string;
-  updated: string;
-  streamId: string;
-  author: Author;
-  headOfStream: boolean;
-  selfUrl: string;
-  eTag: string;
-  links: StreamLink[];
-  entries: GYEvent[];
-}
-
-export interface GYEvent {
-  eventId: string;
-  eventType: string;
-  eventNumber: number;
-  streamId: string;
-  data: string;
-  isJson: boolean;
-  isMetaData: boolean;
-  isLinkMetaData: boolean;
-  positionEventNumber: number;
-  positionStreamId: string;
-  title: string;
-  id: string;
-  updated: string;
-  author: Author;
-  summary: string;
-  links: EventLink[];
-}
-
 
 /**
  * Implements of EventStoreInterface with Greg Young's Event Store (https://eventstore.org)
  */
 export default class GYEventStore implements EventStore {
-  private readonly http: AxiosInstance;
+  private readonly connection: Connection;
+  private readonly credentials: ICredentials;
 
-  constructor({ url }: ConstructOptions) {
-    this.http = axios.create({ baseURL: url });
+  constructor({
+    connectOptions: {
+      host = 'localhost',
+      port = 1113,
+      debug = false,
+    } = {},
+    credentials,
+  }: ConstructOptions) {
+    this.connection = new Connection({ host, port, debug });
+    this.credentials = { ...credentials };
   }
 
-  getById<E extends Event = Event>(streamId: string): Promise<E[]> {
-    const fetchEvents = new BehaviorSubject<string>(`/streams/${streamId}`);
-    const fetchNextIfExists = (stream: GYStream) => {
-      const nextLink = stream.links.find(link => link.relation === 'next');
+  /**
+   * Get all events from given stream.
+   */
+  getById<E extends Event = Event>(streamId: string, options?: GetOptions): Promise<E[]> {
+    const { pageSize, timeout: timeoutDue } = withDefaultGetOptions(options);
 
-      if (nextLink) {
-        fetchEvents.next(nextLink.uri);
-      } else {
-        fetchEvents.complete();
-      }
-    };
-
-    const getEventsThroughForward = fetchEvents.pipe(
-      concatMap(url => from(
-        this.http.get<GYStream>(url, {
-          params: { embed: 'body' },
-          headers: { Accept: 'application/vnd.eventstore.atom+json' },
-        }),
-      )),
-      tap(response => fetchNextIfExists(response.data)),
-      map(response => this.parseEventsFromStream<E>(response.data)),
-      scan<E[], E[]>((accEvents, events) => accEvents.concat(events.reverse()), []),
+    const reduceAllEvents = this.readAllStreamEventsForward<E>(streamId, {
+      pageSize,
+      eachTimeout: timeoutDue,
+    }).pipe(
+      scan((accumulation, events) => accumulation.concat(events), [] as E[]),
       last(),
     );
 
-    return toPromise(getEventsThroughForward);
+    return toPromise(reduceAllEvents);
   }
 
-  async save(streamId: string, events: Event[], options?: SaveOptions): Promise<void> {
-    const data: WriteEventsPayload = events.map(event => ({
+  async save(streamId: string, events: Event[], options?: SaveOptions) {
+    const { expectedVersion } = withDefaultSaveOptions(options);
+
+    const eventsPayload: GYEvent[] = events.map(event => ({
       eventId: generateUniqueId(),
       eventType: event.type,
       data: event.payload,
+      metadata: {},
     }));
 
-    const headers: any = {
-      'Content-Type': 'application/vnd.eventstore.events+json',
+    await this.writeStreamEvents(streamId, eventsPayload, { expectedVersion });
+  }
+
+  private readAllStreamEventsForward<E extends Event = Event>(
+    streamId: string,
+    options: InternalMultipleReadOptions = {},
+  ): Observable<E[]> {
+    const {
+      pageSize = 100,
+      eachTimeout = 10000,
+    } = options;
+
+    const readNextIfExists = ({ isEndOfStream, nextEventNumber }: IReadStreamEventsCompleted) => {
+      const hasNext = !isEndOfStream && nextEventNumber >= 0;
+
+      return hasNext
+        ? this.readStreamEventsForward(streamId, nextEventNumber, {
+          maxCount: pageSize,
+          timeout: eachTimeout,
+        })
+        : EMPTY;
     };
 
-    if (options && options.expectedVersion) {
-      headers['ES-ExpectedVersion'] = `${options.expectedVersion}`;
-    }
+    const parseEvents = (result: IReadStreamEventsCompleted) =>
+      result.events.map((event: GYEvent) => ({
+        type: event.eventType,
+        payload: event.data,
+      } as E));
 
-    await this.http.post(streamId, data, { headers });
+    return this
+      .readStreamEventsForward(streamId, 0, {
+        maxCount: pageSize,
+        timeout: eachTimeout,
+      })
+      .pipe(
+        expand(readNextIfExists),
+        map(parseEvents),
+      );
   }
 
-  private parseEventsFromStream<E extends Event = Event>(stream: GYStream): E[] {
-    return stream.entries.map((event) => {
-      const data = JSON.parse(event.data);
+  private readStreamEventsForward(
+    streamId: string,
+    fromEventNumber: number,
+    options: InternalSingleReadOptions = {},
+  ): Observable<IReadStreamEventsCompleted> {
+    const {
+      maxCount = 100,
+      resolveLinkTos = true,
+      requireMaster = false,
+      timeout: timeoutDue = 10000,
+    } = options;
 
-      return {
-        type: event.eventType,
-        payload: data,
-      } as E;
+    const task = new Observable<IReadStreamEventsCompleted>((observer) => {
+      function handleResult(completed: IReadStreamEventsCompleted) {
+        const { result, error } = completed;
+
+        if (result === ReadStreamResult.Success) {
+          observer.next(completed);
+          observer.complete();
+        } else if (result === ReadStreamResult.NoStream) {
+          observer.error(throwStreamNotFoundException());
+        } else if (result === ReadStreamResult.StreamDeleted) {
+          observer.error(throwStreamDeletedException());
+        } else {
+          observer.error(error);
+        }
+      }
+
+      this.connection.readStreamEventsForward(
+        streamId,
+        fromEventNumber,
+        maxCount,
+        resolveLinkTos,
+        requireMaster,
+        noop,
+        this.credentials,
+        handleResult,
+      );
+    });
+
+    return task.pipe(timeout(timeoutDue));
+  }
+
+  private writeStreamEvents(
+    streamId: string,
+    events: GYEvent[],
+    options: InternalWriteOptions = {},
+  ): Promise<void> {
+    const {
+      expectedVersion = ExpectedVersion.Any,
+      requireMaster = false,
+    } = options;
+
+    return new Promise((resolve, reject) => {
+      function handleResult(completed: IWriteEventsCompleted) {
+        const { result, message } = completed;
+
+        if (result === OperationResult.Success) {
+          resolve();
+        } else if (result === OperationResult.StreamDeleted) {
+          reject(throwStreamDeletedException());
+        } else {
+          reject(message);
+        }
+      }
+
+      this.connection.writeEvents(
+        streamId,
+        expectedVersion,
+        requireMaster,
+        events,
+        this.credentials,
+        handleResult,
+      );
     });
   }
+}
+
+function withDefaultGetOptions(options?: GetOptions): GetOptions {
+  return {
+    pageSize: 100,
+    timeout: 10000,
+    ...options,
+  };
+}
+
+function withDefaultSaveOptions(options?: SaveOptions): SaveOptions {
+  return {
+    expectedVersion: ExpectedVersion.Any,
+    ...options,
+  };
 }

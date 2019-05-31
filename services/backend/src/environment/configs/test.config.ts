@@ -1,7 +1,14 @@
 import EnvironmentConfig from './EnvironmentConfig';
 
 const testEnvironmentConfig: EnvironmentConfig = {
-  EventstoreUrl: 'http://localhost:2113',
+  eventstore: {
+    host: '127.0.0.1',
+    port: 1113,
+    credentials: {
+      username: 'admin',
+      password: 'changeit',
+    },
+  },
 };
 
 export default testEnvironmentConfig;
