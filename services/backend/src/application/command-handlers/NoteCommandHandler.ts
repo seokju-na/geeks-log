@@ -1,25 +1,16 @@
+import { Inject, Injectable } from '@nestjs/common';
 import createNoteCommand from '../../domain/note/commands/createNoteCommand';
-import EventStore from '../../infrastructure/eventstore/EventStore';
-import Repository from '../../infrastructure/repositories/Repository';
-import CreateNoteDto from '../dtos/CreateNoteDto';
-import userNotExistsException from '../exceptions/userNotExistsException';
-import { generatedNoteStreamId } from '../utils/streamIdBuilder';
+import Eventstore from '../../infrastructure/eventstore/Eventstore';
+import { EVENTSTORE } from '../../infrastructure/eventstore/injections';
 
+@Injectable()
 export default class NoteCommandHandler {
   constructor(
-    private eventStore: EventStore,
-    private userRepository: Repository<any>,
+    @Inject(EVENTSTORE) private readonly eventstore: Eventstore,
   ) {
   }
 
-  async handleCreateNoteCommand({ authorId, title, snippets }: CreateNoteDto) {
-    if (await this.userRepository.findOneById(authorId) === null) {
-      throw userNotExistsException();
-    }
-
-    const streamId = generatedNoteStreamId();
-    const events = createNoteCommand({ authorId, title, snippets });
-
-    await this.eventStore.save(streamId, events);
+  async handleCreateNoteCommand(dto: any) {
+    const events = createNoteCommand();
   }
 }

@@ -1,4 +1,4 @@
-import Dummy, { StringIdDummy, TextDummy } from '../../../testing/dummies';
+import Dummy, { TextDummy, StringIdDummy } from '../../../testing/dummies';
 import NoteSnippet from '../types/NoteSnippet';
 
 interface Options {

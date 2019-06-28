@@ -27,11 +27,12 @@ export default function updateNoteCommand({
   }
 
   const events: NoteEvent[] = [];
+  const timestamp = new Date().getTime();
 
   if (title) {
     events.push({
       type: 'NoteTitleUpdated',
-      payload: { title },
+      payload: { title, timestamp },
     });
   }
 
@@ -42,7 +43,7 @@ export default function updateNoteCommand({
 
     events.push({
       type: 'NoteSnippetsUpdated',
-      payload: { snippets },
+      payload: { snippets, timestamp },
     });
   }
 

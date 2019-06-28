@@ -1,4 +1,4 @@
-import NoteEvent from '../events';
+import NoteEvent from '../events/NoteEvent';
 import noteContentCannotBeEmptyException from '../exceptions/noteContentCannotBeEmptyException';
 import NoteSnippet from '../types/NoteSnippet';
 
