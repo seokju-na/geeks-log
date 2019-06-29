@@ -1,5 +1,6 @@
-import { pathExists, readJson, writeJson } from 'fs-extra';
+import { pathExists, readJson } from 'fs-extra';
 import * as path from 'path';
+import writePackage from 'write-pkg';
 import { BumpTypes, UpdatedPackageInfo } from '../core/models';
 import getNextVersion from './getNextVersion';
 
@@ -23,7 +24,7 @@ export default async function updatePackageVersion(
   const previousVersion = packageJson.version;
   const nextVersion = getNextVersion(previousVersion, bumpType);
 
-  await writeJson(packageJsonPath, {
+  await writePackage(packageJsonPath, {
     ...packageJson,
     version: nextVersion,
   });
