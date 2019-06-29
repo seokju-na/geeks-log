@@ -7,6 +7,14 @@
     "name": "Seokju Na",
     "email": "seokju.me@gmail.com"
   },
+  "scripts": {
+    "ci": "geeks-log-devops ci $(pwd)",
+    "cd": "geeks-log-devops cd $(pwd)",
+    "deploy": ""
+  },
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "@geeks-log/devops": "^1.0.1"
+  }
 }
