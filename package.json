@@ -15,6 +15,6 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@geeks-log/devops": "^1.0.1"
+    "@geeks-log/devops": "^1.0.4"
   }
 }

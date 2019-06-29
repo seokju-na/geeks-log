@@ -44,11 +44,7 @@ export default async function deployPackages(rootDir: string) {
 
     const remote = await repository.getRemote('origin');
     await pushToGit(remote, ['refs/heads/master', ...tagRefs]);
-
-    remote.free();
   }
-
-  repository.free();
 
   // 3) Deploy packages
   for (const { name: pkg } of updatedPackageInfos) {
