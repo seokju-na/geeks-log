@@ -4,12 +4,13 @@ import { ROOT_TAG_PREFIX } from '../core/models';
 
 export default async function getLatestTagName(repo: Repository) {
   const tags: string[] = await Tag.list(repo);
+  const prefix = `${ROOT_TAG_PREFIX}/`;
 
   return tags
-    .filter(tag => tag.startsWith(ROOT_TAG_PREFIX))
+    .filter(tag => tag.startsWith(prefix))
     .sort((x, y) => {
-      const xVersion = getVersionFromTagName(x, ROOT_TAG_PREFIX);
-      const yVersion = getVersionFromTagName(y, ROOT_TAG_PREFIX);
+      const xVersion = getVersionFromTagName(x, prefix);
+      const yVersion = getVersionFromTagName(y, prefix);
 
       return compareVersions(xVersion, yVersion) * -1;
     })[0];
