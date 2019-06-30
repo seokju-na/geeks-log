@@ -1,10 +1,9 @@
-import { SpawnOptions } from 'child_process';
-import { copyFile, pathExists, readFile, remove } from 'fs-extra';
+import execa from 'execa';
+import { copyFile, pathExists, remove } from 'fs-extra';
 import { Cred, Remote, Repository } from 'nodegit';
 import path from 'path';
 import { ROOT_PACKAGE, UpdatedPackageInfo } from '../core/models';
 import { getBumpTypeOfPackage, getLatestCommits, groupCommitsByPackage } from '../update-tracker';
-import { spawn } from '../utils';
 import createTag from './createTag';
 import createVersionBumpingCommit from './createVersionBumpingCommit';
 import updatePackageVersion from './updatePackageVersion';
@@ -72,19 +71,16 @@ async function deployPackage(rootDir: string, pkg: string) {
 
   await copyFile(rootNpmrcFilePath, pkgNpmrcFilePath);
 
-  const fileData = await readFile(pkgNpmrcFilePath, 'utf8');
-  console.log(fileData);
-
   let error: Error | null = null;
 
   try {
-    const options: SpawnOptions = {
+    const options = {
       cwd: packageDir,
       stdio: 'inherit',
     };
 
-    await spawn('yarn', [], options);
-    await spawn('npm', ['run', 'deploy'], options);
+    await execa.shell('yarn', options);
+    await execa.shell('npm run deploy', options);
   } catch (err) {
     error = err;
   } finally {
