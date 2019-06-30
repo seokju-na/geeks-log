@@ -2,16 +2,17 @@
 # yarn lockfile v1
 
 
-"@geeks-log/devops@^1.0.14":
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/@geeks-log/devops/-/devops-1.0.14.tgz#8a1dd01aade7285fba9c96732cc17bf11dfcfdb0"
-  integrity sha512-cphWGBCHGpBTQme8X0XR0/gs99ZSZK5hEoYWrRgHQOsyNunkfyrcYE2roJsx6KHoqNIevZZtibkMWVcmtEu8dQ==
+"@geeks-log/devops@^1.0.15":
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/@geeks-log/devops/-/devops-1.0.15.tgz#deae867c002fe75be1a265dea94b3416ee7c17fc"
+  integrity sha512-0RMO/sVeYUDWIlnacaE+pEDcfbsqezqh8Ue0Sv6uRddsk7JHLlCyuXmtG4s6QXp0lMDblEYAfEPnAa4//8j86Q==
   dependencies:
     compare-versions "^3.5.0"
     conventional-commits-parser "^3.0.1"
     fs-extra "^8.0.1"
     lodash "^4.17.11"
     nodegit "^0.24.3"
+    request "^2.88.0"
     write-pkg "^4.0.0"
 
 JSONStream@^1.0.4:
@@ -1058,7 +1059,7 @@ request-promise-native@^1.0.5:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@^2.87.0:
+request@^2.87.0, request@^2.88.0:
   version "2.88.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
   integrity sha512-NAqBSrijGLZdM0WZNsInLJpkJokL72XYjUpnB0iwsRgxh7dB6COrHnTBNwN0E+lHDAJzu7kLAkDeY08z2/A0hg==
