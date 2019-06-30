@@ -13,6 +13,11 @@ export default async function deployPackages(rootDir: string) {
   const latestCommits = await getLatestCommits(repository);
   const commitsByPackageGroup = await groupCommitsByPackage(latestCommits);
 
+  // Ensure root bumping included
+  if (!commitsByPackageGroup[ROOT_PACKAGE]) {
+    commitsByPackageGroup[ROOT_PACKAGE] = [];
+  }
+
   const updatedPackageInfos: UpdatedPackageInfo[] = [];
 
   // 1) Update package version
@@ -30,20 +35,18 @@ export default async function deployPackages(rootDir: string) {
   }
 
   // 2) Bump version and create tags
-  if (updatedPackageInfos.length > 0) {
-    const versionBumpingCommitId = await createVersionBumpingCommit(
-      repository,
-      updatedPackageInfos,
-    );
-    const tagRefs = await Promise.all(
-      updatedPackageInfos.map(updatedPkgInfo =>
-        createTag(repository, versionBumpingCommitId, updatedPkgInfo),
-      ),
-    );
+  const versionBumpingCommitId = await createVersionBumpingCommit(
+    repository,
+    updatedPackageInfos,
+  );
+  const tagRefs = await Promise.all(
+    updatedPackageInfos.map(updatedPkgInfo =>
+      createTag(repository, versionBumpingCommitId, updatedPkgInfo),
+    ),
+  );
 
-    const remote = await repository.getRemote('origin');
-    await pushToGit(remote, ['refs/heads/master', ...tagRefs]);
-  }
+  const remote = await repository.getRemote('origin');
+  await pushToGit(remote, ['refs/heads/master', ...tagRefs]);
 
   // 3) Deploy packages
   for (const { name: pkg } of updatedPackageInfos) {
