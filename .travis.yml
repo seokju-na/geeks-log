@@ -8,6 +8,8 @@ addons:
 cache: yarn
 node_js:
   - '10.15.3'
+before_install:
+  - echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} | tee .npmrc $HOME/.npmrc > /dev/null
 install:
   - yarn
 jobs:
