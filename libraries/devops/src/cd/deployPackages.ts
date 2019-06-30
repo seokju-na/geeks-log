@@ -2,7 +2,7 @@ import execa from 'execa';
 import { pathExists } from 'fs-extra';
 import { Cred, Remote, Repository } from 'nodegit';
 import path from 'path';
-import { ROOT_PACKAGE, UpdatedPackageInfo } from '../core/models';
+import { getUpdatedPackageInfoDescription, ROOT_PACKAGE, UpdatedPackageInfo } from '../core/models';
 import { getBumpTypeOfPackage, getLatestCommits, groupCommitsByPackage } from '../update-tracker';
 import createTag from './createTag';
 import createVersionBumpingCommit from './createVersionBumpingCommit';
@@ -25,7 +25,7 @@ export default async function deployPackages(rootDir: string) {
       continue;
     }
 
-    console.log(`[cd] Bump version: ${getUpdateInfoDescription(updatedPkgInfo)}`);
+    console.log(`[cd] Bump version: ${getUpdatedPackageInfoDescription(updatedPkgInfo)}`);
     updatedPackageInfos.push(updatedPkgInfo);
   }
 
@@ -73,19 +73,11 @@ async function deployPackage(rootDir: string, pkg: string) {
     };
 
     await execa.shell('yarn', options);
-    await execa.shell('yarn build', options);
-    await execa.shell('npm publish --access public', options);
+    await execa.shell('npm run deploy', options);
   } catch (error) {
     console.error(error);
     process.exit(1);
   }
-}
-
-function getUpdateInfoDescription({ name, previousVersion, nextVersion }: UpdatedPackageInfo) {
-  const pkgName = name === ROOT_PACKAGE ? '(root)' : name;
-  const prevVersionName = previousVersion === undefined ? '?' : previousVersion;
-
-  return `${pkgName} ${prevVersionName} -> ${nextVersion}`;
 }
 
 async function pushToGit(remote: Remote, refs: string[]) {

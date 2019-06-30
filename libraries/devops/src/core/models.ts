@@ -18,3 +18,14 @@ export interface UpdatedPackageInfo {
   previousVersion: string | undefined;
   nextVersion: string;
 }
+
+export function getUpdatedPackageInfoDescription({
+  name,
+  previousVersion,
+  nextVersion,
+}: UpdatedPackageInfo) {
+  const pkgName = name === ROOT_PACKAGE ? '(root)' : name;
+  const prevVersionName = previousVersion === undefined ? '?' : previousVersion;
+
+  return `${pkgName} ${prevVersionName} -> ${nextVersion}`;
+}
