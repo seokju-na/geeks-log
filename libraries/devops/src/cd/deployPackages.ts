@@ -1,5 +1,5 @@
 import { SpawnOptions } from 'child_process';
-import { pathExists } from 'fs-extra';
+import { copyFile, pathExists, remove } from 'fs-extra';
 import { Cred, Remote, Repository } from 'nodegit';
 import path from 'path';
 import { ROOT_PACKAGE, UpdatedPackageInfo } from '../core/models';
@@ -67,6 +67,13 @@ async function deployPackage(rootDir: string, pkg: string) {
     return;
   }
 
+  const rootNpmrcFilePath = path.resolve(rootDir, '.npmrc');
+  const pkgNpmrcFilePath = path.resolve(packageDir, '.npmrc');
+
+  await copyFile(rootNpmrcFilePath, pkgNpmrcFilePath);
+
+  let error: Error | null = null;
+
   try {
     const options: SpawnOptions = {
       cwd: packageDir,
@@ -74,9 +81,15 @@ async function deployPackage(rootDir: string, pkg: string) {
     };
 
     await spawn('yarn', [], options);
-    await spawn('yarn', ['deploy'], options);
-  } catch (e) {
-    console.error(e.message);
+    await spawn('npm', ['run', 'deploy'], options);
+  } catch (err) {
+    error = err;
+  } finally {
+    await remove(pkgNpmrcFilePath);
+  }
+
+  if (error !== null) {
+    console.error(error);
     process.exit(1);
   }
 }
