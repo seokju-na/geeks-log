@@ -40,8 +40,5 @@
     "nodegit": "^0.24.3",
     "request": "^2.88.0",
     "write-pkg": "^4.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

@@ -1,5 +1,5 @@
 import { SpawnOptions } from 'child_process';
-import { copyFile, pathExists, remove } from 'fs-extra';
+import { copyFile, pathExists, readFile, remove } from 'fs-extra';
 import { Cred, Remote, Repository } from 'nodegit';
 import path from 'path';
 import { ROOT_PACKAGE, UpdatedPackageInfo } from '../core/models';
@@ -71,6 +71,9 @@ async function deployPackage(rootDir: string, pkg: string) {
   const pkgNpmrcFilePath = path.resolve(packageDir, '.npmrc');
 
   await copyFile(rootNpmrcFilePath, pkgNpmrcFilePath);
+
+  const fileData = await readFile(pkgNpmrcFilePath, 'utf8');
+  console.log(fileData);
 
   let error: Error | null = null;
 

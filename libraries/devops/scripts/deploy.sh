@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-cat .npmrc
 yarn build
-npm publish
+npm publish --access public
