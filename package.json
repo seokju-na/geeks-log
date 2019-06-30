@@ -9,12 +9,11 @@
   },
   "scripts": {
     "ci": "geeks-log-devops ci $(pwd)",
-    "cd": "geeks-log-devops cd $(pwd)",
-    "deploy": ""
+    "cd": "geeks-log-devops cd $(pwd)"
   },
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "@geeks-log/devops": "^1.0.6"
+    "@geeks-log/devops": "^1.0.8"
   }
 }

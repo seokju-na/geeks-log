@@ -74,7 +74,12 @@ async function deployPackage(rootDir: string, pkg: string) {
     };
 
     await spawn('yarn', [], options);
-    await spawn('yarn', ['deploy'], options);
+    await spawn('yarn', ['deploy'], {
+      ...options,
+      env: {
+        NPM_TOKEN: process.env.NPM_TOKEN,
+      },
+    });
   } catch (e) {
     console.error(e.message);
     process.exit(1);
@@ -82,7 +87,10 @@ async function deployPackage(rootDir: string, pkg: string) {
 }
 
 function getUpdateInfoDescription({ name, previousVersion, nextVersion }: UpdatedPackageInfo) {
-  return `${name} ${previousVersion ? previousVersion : '?'} -> ${nextVersion}`;
+  const pkgName = name === ROOT_PACKAGE ? '(root)' : name;
+  const prevVersionName = previousVersion === undefined ? '?' : previousVersion;
+
+  return `${pkgName} ${prevVersionName} -> ${nextVersion}`;
 }
 
 async function pushToGit(remote: Remote, refs: string[]) {
