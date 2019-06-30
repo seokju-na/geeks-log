@@ -5,8 +5,6 @@ const mergeBranchSubMessage = 'Merge branch';
 
 export default async function getLatestCommits(repo: Repository): Promise<Commit[]> {
   const latestTagName = await getLatestTagName(repo);
-  console.log(`latest tag: ${latestTagName}`);
-
   const latestTagCommit = latestTagName !== undefined
     ? await repo.getReferenceCommit(`refs/tags/${latestTagName}`)
     : null;
