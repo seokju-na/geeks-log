@@ -71,15 +71,11 @@ async function deployPackage(rootDir: string, pkg: string) {
     const options: SpawnOptions = {
       cwd: packageDir,
       stdio: 'inherit',
+      env: process.env,
     };
 
     await spawn('yarn', [], options);
-    await spawn('yarn', ['deploy'], {
-      ...options,
-      env: {
-        NPM_TOKEN: process.env.NPM_TOKEN,
-      },
-    });
+    await spawn('npm', ['run', 'deploy'], options);
   } catch (e) {
     console.error(e.message);
     process.exit(1);

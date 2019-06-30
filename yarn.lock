@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@geeks-log/devops@^1.0.8":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@geeks-log/devops/-/devops-1.0.8.tgz#0563bb2ae4cfadfb87cfb852fda576f797ea8800"
-  integrity sha512-8CmDR6smFoCneHObUDZwgn/+6NgQ7bTMnF89gftCbswh6dN2Kq6cOxlJrN5K7r9xbYsAaCQ0M33xvcqTrVMobA==
+"@geeks-log/devops@^1.0.10":
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/@geeks-log/devops/-/devops-1.0.10.tgz#2d83cf40a283280de3497a04c1942f63e189c6f6"
+  integrity sha512-jEfqU2EhAZ0e9M3d5D/DIHPeF3HkMP32tXkPwnYNpHrNLYleFgUAkMADFqxSraGOZA+rXFiX5u4OZWbDUuXJiQ==
   dependencies:
     compare-versions "^3.5.0"
     conventional-commits-parser "^3.0.1"
