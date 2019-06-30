@@ -1,5 +1,5 @@
 import execa from 'execa';
-import { copyFile, pathExists, remove } from 'fs-extra';
+import { pathExists } from 'fs-extra';
 import { Cred, Remote, Repository } from 'nodegit';
 import path from 'path';
 import { ROOT_PACKAGE, UpdatedPackageInfo } from '../core/models';
@@ -66,13 +66,6 @@ async function deployPackage(rootDir: string, pkg: string) {
     return;
   }
 
-  const rootNpmrcFilePath = path.resolve(rootDir, '.npmrc');
-  const pkgNpmrcFilePath = path.resolve(packageDir, '.npmrc');
-
-  await copyFile(rootNpmrcFilePath, pkgNpmrcFilePath);
-
-  let error: Error | null = null;
-
   try {
     const options = {
       cwd: packageDir,
@@ -80,14 +73,9 @@ async function deployPackage(rootDir: string, pkg: string) {
     };
 
     await execa.shell('yarn', options);
-    await execa.shell('npm run deploy', options);
-  } catch (err) {
-    error = err;
-  } finally {
-    await remove(pkgNpmrcFilePath);
-  }
-
-  if (error !== null) {
+    await execa.shell('yarn build', options);
+    await execa.shell('npm publish --access public', options);
+  } catch (error) {
     console.error(error);
     process.exit(1);
   }
