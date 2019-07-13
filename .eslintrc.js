@@ -25,6 +25,7 @@ module.exports = {
     indent: 'off',
     '@typescript-eslint/indent': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
@@ -46,21 +47,7 @@ module.exports = {
     '@typescript-eslint/camelcase': ['error', { properties: 'never', ignoreDestructuring: true }],
     '@typescript-eslint/array-type': ['error', 'array-simple'],
     '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
-    '@typescript-eslint/member-ordering': [
-      'error',
-      {
-        default: [
-          'public-static-field',
-          'private-static-field',
-          'public-instance-field',
-          'private-instance-field',
-          'public-constructor',
-          'private-constructor',
-          'public-instance-method',
-          'private-instance-method',
-        ],
-      },
-    ],
+    '@typescript-eslint/member-ordering': 'off',
     'no-warning-comments': [
       'warn',
       {
