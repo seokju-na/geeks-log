@@ -1,9 +1,0 @@
-0000000000000000000000000000000000000000 7725f3f999e93c1d495e9286402c38362895c0f1 seokju-na <seokju.me@gmail.com> 1563615307 +0900	commit (initial): app-a: A
-7725f3f999e93c1d495e9286402c38362895c0f1 b2c3af0674bf2283f6af5f6b314bbd331658c036 seokju-na <seokju.me@gmail.com> 1563615347 +0900	commit: lib-a: B
-b2c3af0674bf2283f6af5f6b314bbd331658c036 b2c3af0674bf2283f6af5f6b314bbd331658c036 seokju-na <seokju.me@gmail.com> 1563615368 +0900	checkout: moving from master to other
-b2c3af0674bf2283f6af5f6b314bbd331658c036 0dc08e2478b3b2954f05d4686ad91602ee7aa179 seokju-na <seokju.me@gmail.com> 1563615553 +0900	commit: lib-b: C
-0dc08e2478b3b2954f05d4686ad91602ee7aa179 2dca70d3d222840bb7c2a7e2bdafc7ab61ee45da seokju-na <seokju.me@gmail.com> 1563615591 +0900	commit: lib-a: D
-2dca70d3d222840bb7c2a7e2bdafc7ab61ee45da b2c3af0674bf2283f6af5f6b314bbd331658c036 seokju-na <seokju.me@gmail.com> 1563615663 +0900	checkout: moving from other to master
-b2c3af0674bf2283f6af5f6b314bbd331658c036 9199a5a064ac1064ec2cd1052a0d239cbfc30a12 seokju-na <seokju.me@gmail.com> 1563615684 +0900	commit: app-a: A->AA
-9199a5a064ac1064ec2cd1052a0d239cbfc30a12 2dca70d3d222840bb7c2a7e2bdafc7ab61ee45da seokju-na <seokju.me@gmail.com> 1563615714 +0900	checkout: moving from master to other
-2dca70d3d222840bb7c2a7e2bdafc7ab61ee45da d5e4a70b84fd2b4ca167d706055a5e1c34a4f1d8 seokju-na <seokju.me@gmail.com> 1563619142 +0900	commit: 1

@@ -9,5 +9,11 @@
     "name": "Seokju Na",
     "email": "seokju.me@gmail.com"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "ci": "gl-test-packages $(pwd)"
+  },
+  "devDependencies": {
+    "@geeks-log/test-packages": "0.1.1"
+  }
 }
