@@ -1,9 +1,9 @@
 {
   "name": "geeks-log-workspace",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "repository": {
-    "url": "https://github.com/seokju-na/geeks-log",
+    "url": "git+https://github.com/seokju-na/geeks-log.git",
     "type": "git"
   },
   "author": {
@@ -17,5 +17,11 @@
   },
   "dependencies": {
     "@geeks-log/package-manager": "0.3.1"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/seokju-na/geeks-log/issues"
+  },
+  "readme": "ERROR: No README data found!",
+  "homepage": "https://github.com/seokju-na/geeks-log#readme",
+  "_id": "geeks-log-workspace@2.0.0"
 }
