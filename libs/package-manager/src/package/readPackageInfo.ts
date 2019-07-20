@@ -12,7 +12,7 @@ export default async function readPackageInfo(rootDir: string, pkg: string) {
   }
 
   const info = await readPkg({
-    cwd: pkg,
+    cwd: packageDirectoryPath,
   });
 
   const pkgInfo: PackageInfo = {

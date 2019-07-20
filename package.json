@@ -1,3 +1,21 @@
 {
-  "version": "2.0.0"
+  "name": "geeks-log-workspace",
+  "version": "2.0.0",
+  "private": true,
+  "repository": {
+    "url": "https://github.com/seokju-na/geeks-log",
+    "type": "git"
+  },
+  "author": {
+    "name": "Seokju Na",
+    "email": "seokju.me@gmail.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "ci": "geeks-log-test $(pwd)",
+    "cd": "geeks-log-deploy $(pwd)"
+  },
+  "dependencies": {
+    "@geeks-log/package-manager": "0.3.1"
+  }
 }

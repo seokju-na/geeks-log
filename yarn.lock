@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@geeks-log/package-manager@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@geeks-log/package-manager/-/package-manager-0.2.0.tgz#8f3ae00ffd1f634ddd454537adf037c5ae389b2a"
-  integrity sha512-d6PNB5j0wgnqBJl8hMdB0bS3AWfdH53vEC+K7TjrimDqwJ4OkKAeetDVGeGEiiCy9YYtnOGoXEDeiSS5j0nF3Q==
+"@geeks-log/package-manager@0.3.1":
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/@geeks-log/package-manager/-/package-manager-0.3.1.tgz#ab1b21ca427b150fe0d8abe6be8aee7e271b15eb"
+  integrity sha512-AbaGplIsShzQfSPkBnLS37hfM5cCEuGDHpJq1rs8BPDn/+HORxrwevcjvRudHnPT6HRZcK7HTsjSaxL4ulcVVA==
   dependencies:
     conventional-commits-parser "^3.0.1"
     execa "^1.0.0"
