@@ -11,9 +11,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "ci": "gl-test-packages $(pwd)"
+    "ci": "geeks-log-test $(pwd)",
+    "cd": "geeks-log-deploy $(pwd)"
   },
-  "devDependencies": {
-    "@geeks-log/test-packages": "0.1.1"
+  "dependencies": {
+    "@geeks-log/package-manager": "0.1.0"
   }
 }

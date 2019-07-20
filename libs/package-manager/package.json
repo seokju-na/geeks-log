@@ -1,12 +1,13 @@
 {
-  "name": "@geeks-log/test-packages",
-  "version": "0.1.1",
+  "name": "@geeks-log/package-manager",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "esm/index.js",
   "bin": {
-    "gl-test-packages": "bin/index.js"
+    "geeks-log-test": "bin/test.js",
+    "geeks-log-deploy": "bin/deploy.js"
   },
   "scripts": {
     "build": "rm -rf dist/ && rm -rf esm/ && tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json",
@@ -20,10 +21,14 @@
     "access": "public"
   },
   "dependencies": {
+    "conventional-commits-parser": "^3.0.1",
+    "execa": "^2.0.3",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.15",
     "nodegit": "^0.24.3",
-    "request": "^2.88.0"
+    "read-pkg": "^5.2.0",
+    "request": "^2.88.0",
+    "write-pkg": "^4.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",

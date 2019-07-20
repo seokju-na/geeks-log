@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-const { testPackages } = require('../dist');
+const { deployPackages } = require('../dist');
 const pkg = require('../package.json');
 
 const { version } = pkg;
 const [rootDir] = process.argv.slice(2);
 
-console.log(`[ci] ${version}`);
+console.log(`@geeks-log/package-manager: ${version}`);
 
-testPackages(rootDir)
+deployPackages(rootDir)
   .then(() => {
-    console.log('[ci] Done');
+    console.log('[cd] Done');
     process.exit(0);
   })
   .catch((error) => {
