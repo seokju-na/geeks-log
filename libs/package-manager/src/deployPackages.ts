@@ -116,6 +116,8 @@ export default async function deployPackages(rootDir: string) {
     updatedPackages.push(updatePackage);
   }
 
+  console.log(updatedPackages);
+
   // 2) Create bump version commit and tags
   const versionBumpingCommitId = await createVersionBumpingCommit(repo, updatedPackages);
   const tagsToCreate = updatedPackages.map(({ pkg, nextVersion }) => {
