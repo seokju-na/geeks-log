@@ -1,0 +1,13 @@
+{
+  "name": "geeks-log-workspace",
+  "private": true,
+  "repository": {
+    "url": "https://github.com/seokju-na/geeks-log",
+    "type": "git"
+  },
+  "author": {
+    "name": "Seokju Na",
+    "email": "seokju.me@gmail.com"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,26 @@
+language: node_js
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libstdc++-4.9-dev
+cache: yarn
+node_js:
+  - '10.15.3'
+before_install:
+  - echo //registry.npmjs.org/:_authToken=${NPM_TOKEN} | tee .npmrc $HOME/.npmrc > /dev/null
+install:
+  - yarn
+jobs:
+  include:
+    - stage: 'Test'
+      name: 'Testing'
+      script: yarn ci
+      if: type = push AND branch != master
+    - stage: 'Publish'
+      name: 'Deployment'
+      script: yarn cd
+      if: type = push AND branch = master
+git:
+  depth: false
