@@ -1,6 +1,6 @@
 {
   "name": "geeks-log-workspace",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "repository": {
     "url": "https://github.com/seokju-na/geeks-log",
@@ -16,6 +16,6 @@
     "cd": "geeks-log-deploy $(pwd)"
   },
   "dependencies": {
-    "@geeks-log/package-manager": "0.1.3"
+    "@geeks-log/package-manager": "0.2.0"
   }
 }

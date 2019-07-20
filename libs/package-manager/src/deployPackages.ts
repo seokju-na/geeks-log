@@ -1,4 +1,4 @@
-import execa from 'execa';
+import * as execa from 'execa';
 import * as fs from 'fs';
 import { pathExists } from 'fs-extra';
 import { flatMap } from 'lodash';
@@ -133,7 +133,7 @@ export default async function deployPackages(rootDir: string) {
   const tagRefs = await createTags(repo, versionBumpingCommitId, tagsToCreate);
 
   const remote = await repo.getRemote('origin');
-  await pushRefs(remote, tagRefs);
+  await pushRefs(remote, ['refs/heads/master', ...tagRefs]);
 
   // 3) Deploy packages
   for (const { pkg } of updatedPackages) {
