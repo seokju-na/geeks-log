@@ -16,6 +16,6 @@
     "cd": "geeks-log-deploy $(pwd)"
   },
   "dependencies": {
-    "@geeks-log/package-manager": "0.1.1"
+    "@geeks-log/package-manager": "0.1.2"
   }
 }

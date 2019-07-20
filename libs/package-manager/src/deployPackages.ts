@@ -4,6 +4,7 @@ import { pathExists } from 'fs-extra';
 import { flatMap } from 'lodash';
 import { Repository, Signature } from 'nodegit';
 import { EOL } from 'os';
+import * as path from 'path';
 import { DEPLOY_COMMIT_MESSAGE, filterIgnoreCommits, ROOT_PACKAGE } from './constants';
 import createTags from './git/createTags';
 import getCommitsFromRange from './git/getCommitsFromRange';
@@ -53,11 +54,17 @@ function getUpdatedPackageInfoDescription({
   return `${name} ${prevVersionName} -> ${nextVersion}`;
 }
 
-async function createVersionBumpingCommit(repo: Repository, updatedPackages: UpdatedPackageInfo[]) {
+async function createVersionBumpingCommit(
+  repo: Repository,
+  rootDir: string,
+  updatedPackages: UpdatedPackageInfo[],
+) {
   const signature = Signature.now('Seokju Na', 'seokju.me@gmail.com');
   const versionPaths = flatMap(updatedPackages, ({ pkg: { pkgFilePath } }) => {
-    if (fs.existsSync(pkgFilePath)) {
-      return [pkgFilePath];
+    const file = path.relative(rootDir, pkgFilePath);
+
+    if (fs.existsSync(file)) {
+      return [file];
     }
 
     return [];
@@ -116,10 +123,8 @@ export default async function deployPackages(rootDir: string) {
     updatedPackages.push(updatePackage);
   }
 
-  console.log(updatedPackages);
-
   // 2) Create bump version commit and tags
-  const versionBumpingCommitId = await createVersionBumpingCommit(repo, updatedPackages);
+  const versionBumpingCommitId = await createVersionBumpingCommit(repo, rootDir, updatedPackages);
   const tagsToCreate = updatedPackages.map(({ pkg, nextVersion }) => {
     const commits = group[pkg.pkgName] || [];
 
