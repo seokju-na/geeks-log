@@ -88,10 +88,6 @@ export default async function deployPackages(rootDir: string) {
   const headCommit = await repo.getHeadCommit();
   const latestCommits = (await getCommitsFromRange(repo, headCommit, DEPLOY_COMMIT_MESSAGE))
     .filter(filterIgnoreCommits);
-
-  console.log(`[cd] Found commits:${EOL}${latestCommits.map(commit => `- ${commit.message()}`)
-    .join(EOL)}`);
-
   const group = await groupCommitsByPackage(latestCommits);
 
   // Ensure root bumping included
