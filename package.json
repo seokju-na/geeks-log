@@ -1,6 +1,6 @@
 {
   "name": "geeks-log-workspace",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "private": true,
   "repository": {
     "url": "git+https://github.com/seokju-na/geeks-log.git",
@@ -20,5 +20,8 @@
   },
   "bugs": {
     "url": "https://github.com/seokju-na/geeks-log/issues"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "homepage": "https://github.com/seokju-na/geeks-log#readme",
+  "_id": "geeks-log-workspace@4.0.0"
 }
