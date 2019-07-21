@@ -1,7 +1,6 @@
 import { SpawnOptions } from 'child_process';
 import { pathExists } from 'fs-extra';
 import { Commit, Oid, Repository } from 'nodegit';
-import { EOL } from 'os';
 import path from 'path';
 import { filterIgnoreCommits, ROOT_PACKAGE } from './constants';
 import getCommitsFromRange from './git/getCommitsFromRange';
@@ -41,13 +40,8 @@ export default async function testPackages(rootDir: string) {
   const head = await Commit.lookupPrefix(repo, Oid.fromString(toCommitSHA), commitPrefixLength);
   const until = await Commit.lookupPrefix(repo, Oid.fromString(fromCommitSHA), commitPrefixLength);
 
-  console.log(head.id(), until.id());
-
   const commits = (await getCommitsFromRange(repo, head, until))
     .filter(filterIgnoreCommits);
-
-  console.log(`[ci] Found commits:${EOL}${commits.map(commit => `- ${commit.message()}`)
-    .join(EOL)}`);
 
   const group = await groupCommitsByPackage(commits);
 

@@ -1,6 +1,6 @@
 import { ROOT_PACKAGE } from '../constants';
 
-export type PackageType = 'library' | 'app' | '(root)';
+export type PackageType = 'library' | 'service' | '(root)';
 
 export default interface PackageInfo {
   readonly pkgName: string;
@@ -10,13 +10,13 @@ export default interface PackageInfo {
   readonly type: PackageType;
 }
 
-export const packagePathMatches = /^((libs|apps)\/(.+?))\//g;
+export const packagePathMatches = /^((libs|services)\/(.+?))\//g;
 
 export function getPackageType(pkg: string): PackageType {
   if (pkg.startsWith('libs')) {
     return 'library';
-  } else if (pkg.startsWith('apps')) {
-    return 'app';
+  } else if (pkg.startsWith('services')) {
+    return 'service';
   } else {
     return '(root)';
   }
