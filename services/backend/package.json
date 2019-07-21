@@ -1,10 +1,10 @@
 {
   "name": "backend",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Backend service for geeks log",
   "author": {
-    "email": "seokju.me@gmail.com",
-    "name": "Seokju Na"
+    "name": "Seokju Na",
+    "email": "seokju.me@gmail.com"
   },
   "license": "MIT",
   "scripts": {
@@ -47,7 +47,11 @@
     "wait-on": "^3.2.0"
   },
   "jest": {
-    "moduleFileExtensions": ["js", "json", "ts"],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
     "rootDir": "src",
     "testRegex": ".spec.ts$",
     "transform": {
@@ -55,5 +59,7 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "backend@0.0.0"
 }
