@@ -16,12 +16,9 @@
     "cd": "geeks-log-deploy $(pwd)"
   },
   "dependencies": {
-    "@geeks-log/package-manager": "0.3.1"
+    "@geeks-log/package-manager": "0.3.4"
   },
   "bugs": {
     "url": "https://github.com/seokju-na/geeks-log/issues"
-  },
-  "readme": "ERROR: No README data found!",
-  "homepage": "https://github.com/seokju-na/geeks-log#readme",
-  "_id": "geeks-log-workspace@3.0.0"
+  }
 }

@@ -1,15 +1,11 @@
 import { SpawnOptions } from 'child_process';
 import { pathExists } from 'fs-extra';
-import { Commit, Oid, Repository } from 'nodegit';
+import { Repository } from 'nodegit';
 import path from 'path';
-import { filterIgnoreCommits, ROOT_PACKAGE } from './constants';
+import { DEPLOY_COMMIT_MESSAGE, filterIgnoreCommits, ROOT_PACKAGE } from './constants';
 import getCommitsFromRange from './git/getCommitsFromRange';
 import groupCommitsByPackage from './git/groupCommitsByPackage';
 import spawn from './utils/spawn';
-
-const COMMIT_RANGE = process.env.TRAVIS_COMMIT_RANGE as string;
-const [fromCommitSHA, toCommitSHA] = COMMIT_RANGE.split('...') as [string, string];
-const commitPrefixLength = 12;
 
 async function testPackage(rootDir: string, pkg: string) {
   const packageDirPath = path.resolve(rootDir, pkg);
@@ -36,11 +32,9 @@ async function testPackage(rootDir: string, pkg: string) {
 
 export default async function testPackages(rootDir: string) {
   const repo = await Repository.open(rootDir);
+  const head = await repo.getHeadCommit();
 
-  const head = await Commit.lookupPrefix(repo, Oid.fromString(toCommitSHA), commitPrefixLength);
-  const until = await Commit.lookupPrefix(repo, Oid.fromString(fromCommitSHA), commitPrefixLength);
-
-  const commits = (await getCommitsFromRange(repo, head, until))
+  const commits = (await getCommitsFromRange(repo, head, DEPLOY_COMMIT_MESSAGE))
     .filter(filterIgnoreCommits);
 
   const group = await groupCommitsByPackage(commits);
