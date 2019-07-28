@@ -18,7 +18,8 @@ module.exports = {
   settings: { 'import/resolver': { typescript: {} } },
   rules: {
     'no-undef': 'off',
-    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/indent": 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
