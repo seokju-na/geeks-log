@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/testing",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Testing library for geeks log services.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -41,5 +41,5 @@
     "typescript": "^3.5.3"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@geeks-log/testing@0.0.0"
+  "_id": "@geeks-log/testing@0.1.0"
 }
