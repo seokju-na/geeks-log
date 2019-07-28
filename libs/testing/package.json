@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/testing",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Testing library for geeks log services.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,5 +39,7 @@
     "eslint-plugin-import": "^2.18.2",
     "jest": "^24.8.0",
     "typescript": "^3.5.3"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@geeks-log/testing@0.0.0"
 }
