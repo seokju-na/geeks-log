@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserCommandHandler } from '../../../app/command-handlers';
 import { AuthService } from '../../../infra/auth';
@@ -14,7 +23,10 @@ export class AuthController {
   }
 
   @Post('sign-in-local')
-  async signInWithEmailAndPassword(@Body() dto: SignInWithEmailAndPasswordDto) {
+  async signInWithEmailAndPassword(
+    @Body() dto: SignInWithEmailAndPasswordDto,
+    @Res() response,
+  ) {
     const { email, password, userAgent } = dto;
     let userAuthWithToken;
 
@@ -26,6 +38,9 @@ export class AuthController {
 
     const { id, token, name } = userAuthWithToken;
     await this.userCommandHandler.handleUserLoginCommand(id, { userAgent });
+
+    // Set custom authorized header
+    response.setHeader('geeks-log-authorized', token);
 
     return {
       id,
