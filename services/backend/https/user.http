@@ -1,0 +1,11 @@
+POST http://localhost:5000/user
+Content-Type: application/json
+
+{
+  "email": "seokju.me@gmail.com",
+  "password": "qwe09123",
+  "username": "seokju-na",
+  "userAgent": "test"
+}
+
+###

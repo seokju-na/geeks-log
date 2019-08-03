@@ -9,42 +9,77 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "start": "ts-node -r tsconfig-paths/register src/main.ts",
-    "start:dev": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
-    "start:debug": "nodemon --config nodemon-debug.json",
-    "start:prod": "node dist/main.js",
-    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "dev": "concurrently --handle-input \"wait-on dist/dev.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
+    "dev:debug": "nodemon --config nodemon-debug.json",
+    "start": "scripts/cli run-server",
+    "lint": "eslint -c .eslintrc.js 'src/**/*.ts'",
     "test": "yarn lint && yarn build && yarn test:unit && yarn test:e2e",
-    "test:unit": "jest",
-    "test:e2e": "jest --config ./e2e-test/jest-e2e.json",
-    "deploy": "echo \"Not implement yet\""
+    "test:unit": "NODE_ENV=test jest",
+    "test:e2e": "jest --config ./e2e-test/jest-e2e.json --passWithNoTests",
+    "deploy": "echo \"Not implement yet\"",
+    "start-redis": "vendor/redis-stable/src/redis-server"
   },
   "dependencies": {
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
+    "@nestjs/jwt": "^6.1.1",
+    "@nestjs/passport": "^6.1.0",
     "@nestjs/platform-express": "^6.0.0",
+    "@oclif/command": "^1.5.17",
+    "@oclif/config": "^1.13.2",
+    "@oclif/errors": "^1.2.2",
+    "@oclif/plugin-help": "^2.2.0",
+    "class-transformer": "^0.2.3",
+    "class-validator": "^0.9.1",
+    "dotenv": "^8.0.0",
+    "event-store-client": "^1.1.0",
+    "globby": "^10.0.1",
+    "ioredis": "^4.14.0",
+    "leveldown": "^5.1.1",
+    "levelup": "^4.1.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
-    "rxjs": "^6.3.3"
+    "rxjs": "^6.3.3",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@geeks-log/testing": "^0.1.0",
     "@nestjs/testing": "^6.0.0",
     "@types/express": "^4.16.0",
+    "@types/ioredis": "^4.0.13",
     "@types/jest": "^23.3.13",
+    "@types/leveldown": "^4.0.0",
+    "@types/levelup": "^3.1.1",
     "@types/node": "^10.12.18",
+    "@types/passport": "^1.0.0",
+    "@types/passport-jwt": "^3.0.1",
     "@types/supertest": "^2.0.7",
+    "@types/uuid": "^3.4.5",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
     "concurrently": "^4.1.0",
+    "eslint": "^5.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.2",
     "jest": "^24.8.0",
+    "jest-marbles": "^2.4.1",
     "nodemon": "^1.18.9",
     "prettier": "^1.15.3",
     "supertest": "^3.4.1",
     "ts-jest": "24.0.2",
     "ts-node": "8.1.0",
     "tsconfig-paths": "3.8.0",
-    "tslint": "5.16.0",
     "typescript": "3.4.3",
     "wait-on": "^3.2.0"
+  },
+  "files": [
+    "/bin",
+    "/dist"
+  ],
+  "oclif": {
+    "commands": "dist/cli-commands/"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -54,6 +89,22 @@
     ],
     "rootDir": "src",
     "testRegex": ".spec.ts$",
+    "moduleDirectories": [
+      "node_modules/",
+      "src/"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/testing/jest-setups.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "index.ts",
+      "types.ts",
+      "exceptions.ts",
+      "events.ts",
+      "dummies.ts",
+      "/cli-commands/",
+      "/testing/"
+    ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },

@@ -1,0 +1,15 @@
+GET http://localhost:5000/auth
+Authorization: Bearer some-token
+
+###
+
+POST http://localhost:5000/auth/sign-in-local
+Content-Type: application/json
+
+{
+  "email": "seokju.me@gmail.com",
+  "password": "qwe09123",
+  "userAgent": "test"
+}
+
+###
