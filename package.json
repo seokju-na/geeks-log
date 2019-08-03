@@ -16,7 +16,7 @@
     "cd": "geeks-log-deploy $(pwd)"
   },
   "dependencies": {
-    "@geeks-log/package-manager": "0.3.4"
+    "@geeks-log/package-manager": "1.0.0"
   },
   "bugs": {
     "url": "https://github.com/seokju-na/geeks-log/issues"
