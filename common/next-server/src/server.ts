@@ -6,7 +6,6 @@ import { API_PROXY_PATHNAME } from './constants';
 import {
   createApiProxyMiddleware,
   createAuthMiddleware,
-  xPoweredByMiddleware,
 } from './middlewares';
 
 export async function runNextServer({
@@ -19,18 +18,20 @@ export async function runNextServer({
   const app = next({ dev: isDev });
   const handleRequest = app.getRequestHandler();
 
+  app.renderOpts.poweredByHeader = false;
+
   await app.prepare();
 
   const server = express();
 
+  // Remove x-powered-by
+  server.disable('x-powered-by');
+
   // cookie parser
   server.use(cookieParser());
 
-  // x-powered-by
-  server.use(xPoweredByMiddleware);
-
   // health check
-  server.get('/health', (_, res) => {
+  server.get('/_health', (_, res) => {
     res.send('OK');
   });
 

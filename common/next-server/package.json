@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "rm -rf dist/ && rm -rf esm/ && tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json",
-    "test": "tsc -d --noEmit && yarn lint",
+    "test": "tsc -d --noEmit && yarn lint && jest",
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts'",
     "deploy": "scripts/deploy.sh"
   },
@@ -25,21 +25,43 @@
     "@types/cookie-parser": "^1.4.1",
     "@types/express": "^4.17.0",
     "@types/http-proxy-middleware": "^0.19.2",
+    "@types/is-glob": "^4.0.1",
+    "@types/jest": "^24.0.16",
+    "@types/micromatch": "^3.1.0",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "eslint": "^5.0.0",
     "eslint-import-resolver-typescript": "^1.1.1",
     "eslint-plugin-import": "^2.18.2",
     "express": "^4.17.1",
+    "jest": "^24.8.0",
     "next": "9.0.3",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.5.3"
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "cookie": "^0.4.0",
     "cookie-parser": "^1.4.4",
     "date-fns": "^1.30.1",
-    "http-proxy-middleware": "^0.19.1"
+    "http-proxy-middleware": "^0.19.1",
+    "is-glob": "^4.0.1",
+    "micromatch": "^4.0.2"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "moduleDirectories": [
+      "node_modules/"
+    ],
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "testEnvironment": "node"
   },
   "readme": "ERROR: No README data found!",
   "_id": "@geeks-log/next-server@0.0.0"

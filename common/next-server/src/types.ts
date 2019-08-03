@@ -4,7 +4,7 @@ import { NextPageContext } from 'next';
 export interface UserAuth {
   id: string;
   email: string;
-  username: string;
+  name: string;
   token: string;
 }
 
