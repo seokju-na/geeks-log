@@ -60,7 +60,7 @@ export function createApiProxyMiddleware({
     target: apiUrl,
     changeOrigin: true,
     pathRewrite: {
-      [`^/${API_PROXY_PATHNAME}`]: '',
+      [`^${API_PROXY_PATHNAME}`]: '',
     },
     onProxyRes(proxyRes, _, res) {
       const token = proxyRes.headers['geeks-log-authorized'];

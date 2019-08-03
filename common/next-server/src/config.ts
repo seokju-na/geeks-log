@@ -2,7 +2,7 @@ export interface NextServerConfig {
   isDev: boolean;
   port: number;
   apiUrl: string;
-  authUnneededPaths?: [];
+  authUnneededPaths?: string[];
   /** @default 90 days */
   cookieExpiresInSeconds?: number;
 }
