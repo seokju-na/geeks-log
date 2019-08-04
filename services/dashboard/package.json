@@ -1,6 +1,6 @@
 {
   "name": "dashboard",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -33,5 +33,7 @@
     "nodemon": "^1.19.0",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.5"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "dashboard@0.0.0"
 }
