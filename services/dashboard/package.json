@@ -1,0 +1,37 @@
+{
+  "name": "dashboard",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon",
+    "build": "next build && tsc --project tsconfig.server.json",
+    "start": "cross-env NODE_ENV=production node dist/start.js",
+    "lint": "eslint -c .eslintrc.js '{src,pages,server}/**/*.{ts,tsx}'",
+    "test": "yarn lint && yarn build",
+    "deploy": "echo \"Not implement yet\""
+  },
+  "dependencies": {
+    "@geeks-log/next-server": "^0.1.2",
+    "express": "^4.17.1",
+    "next": "9.0.3",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.12",
+    "@types/react": "^16.8.17",
+    "@types/react-dom": "16.8.4",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "nodemon": "^1.19.0",
+    "ts-node": "^8.1.0",
+    "typescript": "^3.4.5"
+  }
+}
