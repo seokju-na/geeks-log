@@ -41,13 +41,12 @@ export class AuthController {
 
     // Set custom authorized header
     response.setHeader('geeks-log-authorized', token);
-
-    return {
+    response.send({
       id,
       email,
       name,
       token,
-    };
+    });
   }
 
   @Get()
