@@ -1,0 +1,73 @@
+{
+  "name": "@geeks-log/ui-devkit",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint -c .eslintrc.js '{src,test}/**/*.ts{,*}'",
+    "test": "yarn lint && yarn build",
+    "build": "yarn build:src && yarn build:styles",
+    "build:src": "rm -rf dist/ && rm -rf esm/ && tsc -p tsconfig.json && tsc -p tsconfig.esm.json",
+    "build:styles": "rollup -c",
+    "storybook:dev": "start-storybook -p 6002",
+    "deploy": "scripts/deploy.sh"
+  },
+  "main": "dist/index.js",
+  "esm": "esm/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "esm/",
+    "package.json"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "peerDependencies": {
+    "intersection-observer": "^0.7.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rxjs": "^6.5.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.4.4",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@storybook/addon-actions": "^5.1.10",
+    "@storybook/addon-knobs": "^5.1.10",
+    "@storybook/react": "^5.1.10",
+    "@types/jest": "^24.0.16",
+    "@types/react": "^16.8.24",
+    "@types/react-dom": "^16.8.5",
+    "@types/storybook__addon-actions": "^3.4.3",
+    "@types/storybook__addon-knobs": "^5.0.3",
+    "@types/storybook__react": "^4.0.2",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "autoprefixer": "^9.6.1",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-emotion": "^10.0.15",
+    "css-loader": "^3.1.0",
+    "eslint": "^5.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "intersection-observer": "^0.7.0",
+    "node-sass": "^4.12.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rollup": "^1.18.0",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rxjs": "^6.5.2",
+    "sass": "^1.22.9",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.1"
+  }
+}
