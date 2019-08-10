@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { AppModule } from '../../app/app-module';
+import { AppModule } from '../../app';
 import { AuthModule } from '../../infra/auth';
 import { CacheModule } from '../../infra/cache';
 import { CqrsModule } from '../../infra/cqrs';

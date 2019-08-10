@@ -1,7 +1,7 @@
 import { Module, Provider } from '@nestjs/common';
 import { UtilityModule } from '../utility';
 import { UserCommands } from './command-handlers';
-import { UserSagas } from './sags';
+import { UserSagas } from './sagas';
 import { UserService } from './user-service';
 
 const providers: Provider[] = [
