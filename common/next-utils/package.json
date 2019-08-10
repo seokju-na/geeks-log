@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/next-utils",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "Next common utils",
   "main": "dist/index.js",
@@ -32,5 +32,7 @@
     "eslint-plugin-import": "^2.18.2",
     "next": "9.0.3",
     "typescript": "^3.5.3"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@geeks-log/next-utils@0.0.1"
 }
