@@ -1,7 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import environment from './environment';
-import { RestApiModule } from './ports/rest-api';
+import environment from '../environment';
+import { RestApiModule } from './rest-api';
 
 export async function createServerModule() {
   return await NestFactory.create(RestApiModule);

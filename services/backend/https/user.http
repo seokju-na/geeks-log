@@ -2,10 +2,18 @@ POST http://localhost:5000/user
 Content-Type: application/json
 
 {
-  "email": "seokju.me@gmail.com",
+  "email": "test2@test.com",
   "password": "qwe09123",
-  "username": "seokju-na",
+  "username": "test1",
   "userAgent": "test"
 }
+
+###
+
+GET http://localhost:5000/user/check-email?email=seokju.me@gmail.com
+
+###
+
+GET http://localhost:5000/user/check-username?username=seokju-na
 
 ###

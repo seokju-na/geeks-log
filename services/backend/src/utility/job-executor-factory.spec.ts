@@ -78,22 +78,4 @@ describe('utility.JobExecutorFactory', () => {
 
     expect(executor.results).toBeObservable(expected);
   }));
-
-  test('fake async test', fakeAsync(() => {
-    let value = 'foo';
-
-    function setValueToBar() {
-      return new Promise<string>((resolve) => {
-        resolve('bar');
-      });
-    }
-
-    setValueToBar().then(val => {
-      value = val;
-    });
-
-    flush();
-
-    expect(value).toEqual('bar');
-  }));
 });

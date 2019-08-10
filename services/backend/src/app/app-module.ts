@@ -1,24 +1,21 @@
-import { Module } from '@nestjs/common';
-import { CacheModule } from '../infra/cache';
-import { EventstoreModule } from '../infra/eventstore';
+import { Module, Provider } from '@nestjs/common';
 import { UtilityModule } from '../utility';
-import { UserCommandHandler } from './command-handlers';
+import { UserCommands } from './command-handlers';
+import { UserSagas } from './sags';
 import { UserService } from './user-service';
+
+const providers: Provider[] = [
+  UserService,
+  UserCommands,
+  UserSagas,
+];
 
 @Module({
   imports: [
-    CacheModule,
-    EventstoreModule,
     UtilityModule,
   ],
-  providers: [
-    UserService,
-    UserCommandHandler,
-  ],
-  exports: [
-    UserService,
-    UserCommandHandler,
-  ],
+  providers: providers,
+  exports: providers,
 })
 export class AppModule {
 }

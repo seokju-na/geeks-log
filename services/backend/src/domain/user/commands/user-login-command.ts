@@ -1,10 +1,14 @@
+import { Command } from '../../core';
 import { UserEventTypes, UserLoggedInEvent } from '../events';
 
-interface Params {
-  userAgent: string;
+export class UserLoginCommand extends Command {
+  constructor(public readonly payload: { id: string; userAgent: string }) {
+    super();
+  }
 }
 
-export function userLoginCommand({ userAgent }: Params): [UserLoggedInEvent] {
+export function execUserLoginCommand({ payload }: UserLoginCommand): [UserLoggedInEvent] {
+  const { userAgent } = payload;
   const timestamp = new Date().toISOString();
 
   return [

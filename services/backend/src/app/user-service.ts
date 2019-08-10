@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { Cache, CACHE_TOKEN } from '../infra/cache';
 
 const EMAIL_MAP_KEY = 'user_email_map';
@@ -6,9 +7,10 @@ const USERNAME_MAP_KEY = 'username_map';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @Inject(CACHE_TOKEN) private readonly cache: Cache,
-  ) {
+  private readonly cache: Cache;
+
+  constructor(private readonly moduleRef: ModuleRef) {
+    this.cache = this.moduleRef.get(CACHE_TOKEN, { strict: false });
   }
 
   async isUserEmailUnique(email: string) {

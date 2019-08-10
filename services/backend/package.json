@@ -79,7 +79,7 @@
     "/dist"
   ],
   "oclif": {
-    "commands": "dist/cli-commands/"
+    "commands": "dist/ports/cli/"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -102,6 +102,8 @@
       "exceptions.ts",
       "events.ts",
       "dummies.ts",
+      "errors.ts",
+      "interfaces.ts",
       "/cli-commands/",
       "/testing/"
     ],

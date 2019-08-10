@@ -1,1 +1,1 @@
-export * from './user-command-handler';
+export * from './user-commands';

@@ -1,5 +1,4 @@
 import { IsDefined, IsEmail, Length } from 'class-validator';
-import { CreateLocalUserCommandDto } from '../../app/dtos';
 
 export class SignInWithEmailAndPasswordDto {
   @IsDefined()
@@ -14,5 +13,3 @@ export class SignInWithEmailAndPasswordDto {
   userAgent: string;
 }
 
-export class CreateLocalUserDto extends CreateLocalUserCommandDto {
-}

@@ -16,6 +16,7 @@ export interface UserLoggedInEvent extends DomainEvent {
 export interface LocalUserCreatedEvent extends DomainEvent {
   type: UserEventTypes.LOCAL_USER_CREATED;
   payload: {
+    id: string;
     email: string;
     username: string;
     encryptedPassword: string;

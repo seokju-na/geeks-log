@@ -9,16 +9,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserCommandHandler } from '../../../app/command-handlers';
+import { UserLoginCommand } from '../../../domain/user/commands';
 import { AuthService } from '../../../infra/auth';
 import { UserAuth } from '../../../infra/auth/types';
+import { Cqrs } from '../../../infra/cqrs';
 import { SignInWithEmailAndPasswordDto } from '../dtos';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userCommandHandler: UserCommandHandler,
+    private readonly cqrs: Cqrs,
   ) {
   }
 
@@ -37,7 +38,9 @@ export class AuthController {
     }
 
     const { id, token, name } = userAuthWithToken;
-    await this.userCommandHandler.handleUserLoginCommand(id, { userAgent });
+    const command = new UserLoginCommand({ id, userAgent });
+
+    await this.cqrs.executeCommand(command);
 
     // Set custom authorized header
     response.setHeader('geeks-log-authorized', token);

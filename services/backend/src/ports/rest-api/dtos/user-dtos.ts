@@ -1,6 +1,6 @@
 import { IsDefined, IsEmail, Length } from 'class-validator';
 
-export class CreateLocalUserCommandDto {
+export class CreateLocalUserDto {
   @IsDefined()
   @IsEmail()
   email: string;
@@ -13,11 +13,6 @@ export class CreateLocalUserCommandDto {
   @Length(6, 50)
   password: string;
 
-  @IsDefined()
-  userAgent: string;
-}
-
-export class UserLoginDto {
   @IsDefined()
   userAgent: string;
 }
