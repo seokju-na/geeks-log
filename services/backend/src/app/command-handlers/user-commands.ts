@@ -6,29 +6,22 @@ import {
   execUserLoginCommand,
   UserLoginCommand,
 } from '../../domain/user/commands';
-import { CommandHandler } from '../../infra/cqrs';
+import { CommandHandler, ICommandHandler } from '../../infra/cqrs';
 import { Eventstore, EVENTSTORE_TOKEN, ExpectedVersion } from '../../infra/eventstore';
 import { userEmailDuplicatedException, usernameDuplicatedException } from '../exceptions';
 import { UserService } from '../user-service';
 
 @Injectable()
 export class UserCommands {
-  private readonly eventstore: Eventstore;
-
-  constructor(
-    private readonly userService: UserService,
-    private readonly moduleRef: ModuleRef,
-  ) {
-    this.eventstore = this.moduleRef.get(EVENTSTORE_TOKEN, { strict: false });
-  }
-
   @CommandHandler(UserLoginCommand)
-  async handleUserLoginCommand(command: UserLoginCommand) {
-    await this.eventstore.save(command.payload.id, execUserLoginCommand(command));
-  }
+  handleUserLoginCommand: ICommandHandler = async (command: UserLoginCommand) => {
+    const events = execUserLoginCommand(command);
+    await this.eventstore.save(command.payload.id, events);
 
+    return events;
+  };
   @CommandHandler(CreateLocalUserCommand)
-  async handleCreateLocalUserCommand(command: CreateLocalUserCommand) {
+  handleCreateLocalUserCommand: ICommandHandler = async (command: CreateLocalUserCommand) => {
     const { email, username } = command.payload;
 
     if (!await this.userService.isUserEmailUnique(email)) {
@@ -45,5 +38,14 @@ export class UserCommands {
     );
 
     return events;
+  };
+
+  private readonly eventstore: Eventstore;
+
+  constructor(
+    private readonly userService: UserService,
+    private readonly moduleRef: ModuleRef,
+  ) {
+    this.eventstore = this.moduleRef.get(EVENTSTORE_TOKEN, { strict: false });
   }
 }
