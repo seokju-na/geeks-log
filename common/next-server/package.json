@@ -1,17 +1,20 @@
 {
   "name": "@geeks-log/next-server",
-  "version": "0.1.2",
+  "version": "0.1.7",
   "description": "Next server common usage",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "module": "esm/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf dist/ && rm -rf esm/ && tsc -p tsconfig.build.json && tsc -p tsconfig.esm.json",
+    "build": "rm -rf dist/ && tsc -p tsconfig.build.json",
     "test": "tsc -d --noEmit && yarn lint && jest",
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts'",
     "deploy": "scripts/deploy.sh"
   },
+  "files": [
+    "dist/",
+    "package.json"
+  ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

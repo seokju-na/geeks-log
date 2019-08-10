@@ -4,9 +4,8 @@ import { RequestHandler, Response } from 'express';
 import proxy from 'http-proxy-middleware';
 import { API_PROXY_PATHNAME, AUTH_COOKIE_NAME } from './constants';
 import { isPathMatch } from './paths';
-import { UserAuth } from './types';
 
-const knownIgnorePaths = ['/_next*'];
+const knownIgnorePaths = ['/_next*', '/_next/*'];
 
 export function createAuthMiddleware({
   apiUrl,
@@ -30,7 +29,7 @@ export function createAuthMiddleware({
       const token = cookies[AUTH_COOKIE_NAME];
 
       try {
-        const { data: userAuth } = await http.get<UserAuth>('/auth', {
+        const { data: userAuth } = await http.get('/auth', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
