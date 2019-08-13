@@ -2,21 +2,9 @@ import isGlob from 'is-glob';
 import micromatch from 'micromatch';
 
 export function isPathMatch(pathname: string, matches: string[]) {
-  let isMatched = false;
-
-  for (const match of matches) {
-    if (isGlob(match)) {
-      isMatched = matchSingleGlobPath(pathname, match);
-    } else {
-      isMatched = matchSingleStringPath(pathname, match);
-    }
-
-    if (isMatched) {
-      break;
-    }
-  }
-
-  return isMatched;
+  return matches.some(match => isGlob(match)
+    ? matchSingleGlobPath(pathname, match)
+    : matchSingleStringPath(pathname, match))
 }
 
 function matchSingleStringPath(pathname: string, match: string) {
