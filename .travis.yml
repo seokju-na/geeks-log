@@ -17,7 +17,7 @@ jobs:
     - stage: 'Test'
       name: 'Testing'
       script: yarn ci
-      if: type = push AND branch != master
+      if: type IN (pull_request, push) AND branch != master
     - stage: 'Publish'
       name: 'Deployment'
       script: yarn cd
