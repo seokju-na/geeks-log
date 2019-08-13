@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/next-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Next server common usage",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -67,5 +67,5 @@
     "testEnvironment": "node"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@geeks-log/next-server@0.1.7"
+  "_id": "@geeks-log/next-server@0.2.0"
 }
