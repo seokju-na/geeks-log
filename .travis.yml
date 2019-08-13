@@ -14,10 +14,14 @@ install:
   - yarn
 jobs:
   include:
+    - stage: 'PR Test'
+      name: 'PR Testing'
+      script: yarn ci
+      if: type = pull_request
     - stage: 'Test'
       name: 'Testing'
       script: yarn ci
-      if: type IN (pull_request, push) AND branch != master
+      if: type = push AND branch != master
     - stage: 'Publish'
       name: 'Deployment'
       script: yarn cd
