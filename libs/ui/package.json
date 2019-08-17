@@ -1,0 +1,110 @@
+{
+  "name": "@geeks-log/ui",
+  "version": "0.0.2",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint -c .eslintrc.js '{src,test}/**/*.ts{,*}'",
+    "test": "yarn lint && jest --passWithNoTests",
+    "build": "yarn build:src && yarn build:styles",
+    "build:src": "rm -rf dist/ && tsc -p tsconfig.build.json",
+    "build:styles": "rollup -c",
+    "storybook:dev": "start-storybook -p 6001",
+    "storybook:build": "build-storybook -c .storybook -o .out/",
+    "storybook:deploy": "storybook-to-ghpages -s storybook:build --ci --out=.out/ --host-token-env-variable=GITHUB_TOKEN",
+    "deploy": "scripts/deploy.sh"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "package.json"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "storybook-deployer": {
+    "gitUsername": "seokju-na",
+    "gitEmail": "seokju.me@gmail.com",
+    "commitMessage": "Deploy storybook to GitHub Pages"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6"
+  },
+  "peerDependencies": {
+    "@emotion/core": "^10.0.15",
+    "@emotion/styled": "^10.0.15",
+    "@geeks-log/ui-devkit": "^0.0.7",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rxjs": "^6.5.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.3.3",
+    "@emotion/babel-preset-css-prop": "^10.0.14",
+    "@emotion/core": "^10.0.15",
+    "@emotion/styled": "^10.0.15",
+    "@geeks-log/ui-devkit": "^0.0.7",
+    "@storybook/addon-actions": "^5.1.11",
+    "@storybook/addon-knobs": "^5.1.10",
+    "@storybook/addons": "^5.1.10",
+    "@storybook/react": "^5.1.10",
+    "@storybook/storybook-deployer": "^2.8.1",
+    "@types/classnames": "^2.2.9",
+    "@types/jest": "^24.0.16",
+    "@types/react": "^16.8.24",
+    "@types/react-dom": "^16.8.5",
+    "@types/storybook__addon-actions": "^3.4.3",
+    "@types/storybook__addon-knobs": "^5.0.3",
+    "@types/storybook__react": "^4.0.2",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "autoprefixer": "^9.6.1",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-emotion": "^10.0.15",
+    "core-js": "3",
+    "css-loader": "^3.1.0",
+    "emotion-theming": "^10.0.14",
+    "eslint": "^5.0.0",
+    "eslint-import-resolver-typescript": "^1.1.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "intersection-observer": "^0.7.0",
+    "jest": "^24.8.0",
+    "node-sass": "^4.12.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "rollup": "^1.18.0",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rxjs": "^6.5.2",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "ts-jest": "^24.0.2",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.39.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "rootDir": "test/",
+    "testRegex": ".spec.ts$",
+    "moduleDirectories": [
+      "node_modules/"
+    ],
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}

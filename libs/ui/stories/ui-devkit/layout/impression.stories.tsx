@@ -1,10 +1,10 @@
+import { Impression } from '@geeks-log/ui-devkit';
 import { action } from '@storybook/addon-actions';
 import { number, text } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import React from 'react';
-import { Impression } from '../../src';
 
-storiesOf('layout/impression', module)
+storiesOf('ui-devkit/layout/impression', module)
   .add('Using <Impression />', () => {
     const rootMargin = text('rootMargin', '0px');
     const timeThreshold = number('timeThreshold', 0);

@@ -8,8 +8,11 @@ module.exports = ({ config }) => {
     {
       test: /\.(js|jsx|ts|tsx)$/,
       loader: 'babel-loader',
-      options: { cacheDirectory: true },
-      include: [path.resolve(__dirname, '../src'), path.resolve(__dirname, '../stories')],
+      include: [
+        path.resolve(__dirname, '../.storybook'),
+        path.resolve(__dirname, '../src'),
+        path.resolve(__dirname, '../stories'),
+      ],
     },
     // Style loader:
     // https://storybook.js.org/docs/configurations/custom-webpack-config/#full-control-mode
@@ -24,7 +27,7 @@ module.exports = ({ config }) => {
   config.resolve.plugins = [
     ...(config.resolve.plugins || []),
     new TsconfigPathsPlugin({
-      configFile: path.resolve(__dirname, '../tsconfig.json'),
+      configFile: path.resolve(__dirname, '../tsconfig.stories.json'),
     }),
   ];
   config.resolve.extensions = [...(config.resolve.extensions || []), '.ts', '.tsx'];

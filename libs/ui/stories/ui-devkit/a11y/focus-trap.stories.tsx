@@ -1,10 +1,9 @@
+import { AutoFocusTarget, useFocusTrap, FocusTrap } from '@geeks-log/ui-devkit';
 import { boolean, select } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import React, { createElement } from 'react';
 
-import { AutoFocusTarget, FocusTrap, useFocusTrap } from '../../src';
-
-storiesOf('a11y/focus-trap', module)
+storiesOf('ui-devkit/a11y/focus-trap', module)
   .add('hook', () => createElement(() => {
     const enable = boolean('enable', true);
     const autoFocusTarget = select<AutoFocusTarget>('autoFocusTarget', {
@@ -21,7 +20,8 @@ storiesOf('a11y/focus-trap', module)
           <h1>Outside</h1>
           <button>Other button</button>
         </div>
-        <div ref={ref} style={{ border: `4px solid ${enable ? 'lightGreen' : 'black'}`, padding: 16 }}>
+        <div ref={ref}
+             style={{ border: `4px solid ${enable ? 'lightGreen' : 'black'}`, padding: 16 }}>
           <h1>Inside</h1>
           <button>First</button>
           <button>Second</button>
@@ -51,5 +51,5 @@ storiesOf('a11y/focus-trap', module)
           <button>Third</button>
         </FocusTrap>
       </div>
-    )
+    );
   });

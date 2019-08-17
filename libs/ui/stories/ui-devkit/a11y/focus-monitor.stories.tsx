@@ -1,10 +1,9 @@
+import { useFocusMonitor } from '@geeks-log/ui-devkit';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import React, { createElement } from 'react';
 
-import { useFocusMonitor } from '../../src';
-
-storiesOf('a11y/focus-monitor', module)
+storiesOf('ui-devkit/a11y/focus-monitor', module)
   .add('default', () => createElement(() => {
     const ref = useFocusMonitor<HTMLButtonElement>({
       onFocusChange(origin) {
