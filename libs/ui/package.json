@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/ui",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts{,*}'",
@@ -108,5 +108,5 @@
     "testEnvironment": "node"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@geeks-log/ui@0.0.2"
+  "_id": "@geeks-log/ui@0.1.0"
 }
