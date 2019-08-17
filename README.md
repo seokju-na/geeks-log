@@ -2,6 +2,8 @@
 
 Blog platform for geeks.
 
+See `@geeks-log/ui` storybook: https://seokju-na.github.io/geeks-log
+
 **In-Development**
 
 ## 저자의 생각

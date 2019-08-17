@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint -c .eslintrc.js '{src,test}/**/*.ts{,*}'",
+    "lint": "eslint -c .eslintrc.js 'src/**/*.ts{,*}'",
     "test": "yarn lint && jest --passWithNoTests",
     "build": "yarn build:src && yarn build:styles",
     "build:src": "rm -rf dist/ && tsc -p tsconfig.build.json",
