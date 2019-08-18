@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/note",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Diff, Match, Patch for snippet like interface",
   "scripts": {
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts{,*}'",
@@ -62,5 +62,7 @@
         "tsConfig": "tsconfig.spec.json"
       }
     }
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@geeks-log/note@0.0.0"
 }
