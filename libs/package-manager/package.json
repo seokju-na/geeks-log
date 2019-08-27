@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/package-manager",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,5 +43,5 @@
     "typescript": "^3.5.3"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@geeks-log/package-manager@1.0.0"
+  "_id": "@geeks-log/package-manager@1.0.1"
 }
