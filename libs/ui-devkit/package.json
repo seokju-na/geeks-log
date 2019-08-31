@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/ui-devkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "scripts": {
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts{,*}'",
@@ -55,5 +55,5 @@
     "typescript": "^3.5.3"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@geeks-log/ui-devkit@0.0.8"
+  "_id": "@geeks-log/ui-devkit@0.1.0"
 }
