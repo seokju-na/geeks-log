@@ -9,9 +9,9 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "dev": "concurrently --handle-input \"wait-on dist/dev.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
+    "dev": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
     "dev:debug": "nodemon --config nodemon-debug.json",
-    "start": "scripts/cli run-server",
+    "start": "node dist/main",
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts'",
     "test": "yarn lint && yarn build && yarn test:unit && yarn test:e2e",
     "test:unit": "NODE_ENV=test jest",

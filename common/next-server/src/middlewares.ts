@@ -1,11 +1,19 @@
 import axios from 'axios';
 import { addSeconds } from 'date-fns';
-import { RequestHandler, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import proxy from 'http-proxy-middleware';
 import { API_PROXY_PATHNAME, AUTH_COOKIE_NAME } from './constants';
 import { isPathMatch } from './paths';
 
 const knownIgnorePaths = ['/_next*', '/_next/*'];
+const queryTokenFromRequestCookies = (request: Request) => {
+  const cookies = request.cookies;
+
+  if (cookies != null && cookies[AUTH_COOKIE_NAME]) {
+    return cookies[AUTH_COOKIE_NAME];
+  }
+  return null;
+};
 
 export function createAuthMiddleware({
   apiUrl,
@@ -23,11 +31,9 @@ export function createAuthMiddleware({
       return;
     }
 
-    const cookies = req.cookies;
+    const token = queryTokenFromRequestCookies(req);
 
-    if (cookies != null && cookies[AUTH_COOKIE_NAME]) {
-      const token = cookies[AUTH_COOKIE_NAME];
-
+    if (token !== null) {
       try {
         const { data: userAuth } = await http.get('/auth', {
           headers: {
@@ -60,6 +66,13 @@ export function createApiProxyMiddleware({
     changeOrigin: true,
     pathRewrite: {
       [`^${API_PROXY_PATHNAME}`]: '',
+    },
+    onProxyReq(proxyReq, req) {
+      const token = queryTokenFromRequestCookies(req as Request);
+
+      if (token !== null) {
+        proxyReq.setHeader('authorization', `Bearer ${token}`);
+      }
     },
     onProxyRes(proxyRes, _, res) {
       const token = proxyRes.headers['geeks-log-authorized'];
