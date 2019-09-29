@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/event-system",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Event system library for geeks log",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,7 +32,6 @@
     "ts-jest": "^24.1.0",
     "typescript": "^3.5.3"
   },
-  "dependencies": {},
   "jest": {
     "moduleFileExtensions": [
       "js",
@@ -59,5 +58,7 @@
         "tsConfig": "tsconfig.spec.json"
       }
     }
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@geeks-log/event-system@0.0.0"
 }
