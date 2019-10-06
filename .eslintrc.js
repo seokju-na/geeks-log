@@ -12,13 +12,13 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
   plugins: ['@typescript-eslint', 'import'],
   settings: { 'import/resolver': { typescript: {} } },
   rules: {
     'no-undef': 'off',
-    "@typescript-eslint/indent": 'off',
+    '@typescript-eslint/indent': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
@@ -26,7 +26,10 @@ module.exports = {
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { ignoreRestSiblings: true },
+    ],
     '@typescript-eslint/member-ordering': 'off',
     'no-warning-comments': [
       'warn',
@@ -41,5 +44,5 @@ module.exports = {
     'import/no-cycle': ['error', { maxDepth: Infinity }],
     eqeqeq: ['error', 'always', { null: 'ignore' }],
     'import/no-duplicates': 'error',
-  }
+  },
 };

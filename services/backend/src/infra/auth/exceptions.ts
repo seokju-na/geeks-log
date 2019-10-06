@@ -5,8 +5,5 @@ export enum AuthExceptionCodes {
 }
 
 export function userUnauthorizedException() {
-  return new InfraException(
-    AuthExceptionCodes.USER_UNAUTHORIZED,
-    'Unauthorized',
-  );
+  return new InfraException(AuthExceptionCodes.USER_UNAUTHORIZED, 'Unauthorized');
 }

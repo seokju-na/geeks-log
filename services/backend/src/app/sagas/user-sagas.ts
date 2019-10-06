@@ -1,20 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { localUserCreatedEvent } from 'domain/user';
 import { from } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
-import { LocalUserCreatedEvent, UserEventTypes } from '../../domain/user/events';
-import { ISaga, ofEventType, Saga } from '../../infra/cqrs';
-import { UserService } from '../user-service';
+import { createSaga, ofEventType } from '../../infra/cqrs';
+import { UserService } from '../services';
 
 @Injectable()
 export class UserSagas {
-  @Saga({ dispatchCommand: false })
-  setEmailAndUsernameWhenUserCreated: ISaga = events => events.pipe(
-    ofEventType(UserEventTypes.LOCAL_USER_CREATED),
-    concatMap(({ payload: { email, username } }: LocalUserCreatedEvent) =>
-      from(this.userService.setEmailAndUsername(email, username)),
-    ),
+  readonly setEmailAndUsernameWhenUserCreated = createSaga(
+    events =>
+      events.pipe(
+        ofEventType(localUserCreatedEvent),
+        concatMap(event => {
+          const { email, username } = event;
+
+          return from(this.userService.setEmailAndUsername(email, username));
+        }),
+      ),
+    { dispatch: false },
   );
 
-  constructor(private readonly userService: UserService) {
+  private readonly userService: UserService;
+
+  constructor(private readonly moduleRef: ModuleRef) {
+    this.userService = this.moduleRef.get(UserService, { strict: false });
   }
 }

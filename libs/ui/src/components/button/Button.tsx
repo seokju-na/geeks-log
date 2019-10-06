@@ -12,14 +12,16 @@ interface Props extends Omit<HTMLProps<HTMLButtonElement>, 'size' | 'type'> {
   size?: ButtonSize;
   /** @default 'flat' */
   type?: ButtonType;
-  buttonType?: HTMLProps<HTMLButtonElement>['type'];
+  buttonType?: 'button' | 'submit' | 'reset';
   showSpinner?: boolean;
+  removeChildrenWhenShowSpinner?: boolean;
   children?: ReactNode;
 }
 
 export function Button({
   children,
-  showSpinner,
+  showSpinner = false,
+  removeChildrenWhenShowSpinner = false,
   color = 'normal',
   size = 'regular',
   type = 'flat',
@@ -33,7 +35,7 @@ export function Button({
     <Wrapper
       ref={ref}
       color={color}
-      type={buttonType as any}
+      type={buttonType}
       className={classNames('Button', {
         [`Button--type-${type}`]: true,
         [`Button--size-${size}`]: true,
@@ -42,8 +44,7 @@ export function Button({
       {...otherProps}
     >
       {showSpinner ? <Spinner color="white"/> : null}
-      <Content>{children}</Content>
+      {showSpinner && removeChildrenWhenShowSpinner ? null : <Content>{children}</Content>}
     </Wrapper>
   );
 }
-

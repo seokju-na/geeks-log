@@ -1,20 +1,42 @@
-import { DomainEvent } from './domain-event';
+import {
+  createDispatchable,
+  Creator,
+  Dispatchable,
+  DisallowTypeProperty,
+  DispatchableCreator,
+  FunctionWithParametersType,
+} from '@geeks-log/event-system';
+import { Event } from './event';
+import { COMMAND_TYPE } from './constants';
+import { matchType } from './utils';
 
-export abstract class Command<Payload = any> {
-  public payload?: Payload;
+export interface Command extends Dispatchable {}
+
+export interface TypedCommand<T extends string> extends Command {
+  readonly type: T;
 }
 
-export type CommandExecutor = (command: Command) => DomainEvent[];
+export type CommandTypeOf<T> = T extends Creator ? ReturnType<T> : never;
 
-export type ReturnEventsOf<CE> = CE extends (command: Command) => infer Events ? Events : never;
+export function isCommand(value: unknown): value is Command {
+  return matchType(value, COMMAND_TYPE);
+}
 
-/**
- * Check if instance is command type.
- */
-export function isCommand(command: unknown): command is Command {
-  if (typeof command !== 'object' || command == null) {
-    return false;
-  }
+export type CommandExecutor<T extends Creator = Creator, R extends Event[] = Event[]> = (
+  command: CommandTypeOf<T>,
+) => R;
 
-  return Object.getPrototypeOf(command.constructor.prototype) === Command.prototype;
+export function createCommand<T extends string>(
+  type: T,
+): DispatchableCreator<T, () => TypedCommand<T>>;
+export function createCommand<T extends string, P extends object>(
+  type: T,
+  config: { _as: 'props'; _p: P },
+): DispatchableCreator<T, (props: P) => P & TypedCommand<T>>;
+export function createCommand<T extends string, P extends any[], R extends object>(
+  type: T,
+  creator: Creator<P, DisallowTypeProperty<R>>,
+): FunctionWithParametersType<P, R & TypedCommand<T>> & TypedCommand<T>;
+export function createCommand<T extends string, C extends Creator>(type: T, config?: C): Creator {
+  return createDispatchable(COMMAND_TYPE, type, config);
 }

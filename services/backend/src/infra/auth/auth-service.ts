@@ -15,8 +15,7 @@ export class AuthService {
     @Inject(CACHE_TOKEN) private readonly cache: Cache,
     private readonly encryption: Encryption,
     private readonly jwtService: JwtService,
-  ) {
-  }
+  ) {}
 
   async putLocalUserInfo(userAuth: UserAuth) {
     const key = this.createAuthKeyWithEmail(userAuth.email);
@@ -43,14 +42,10 @@ export class AuthService {
     }
 
     const { encryptedPassword, salt, name } = userAuth;
-    const isPasswordValid = await this.encryption.verify(
-      password,
-      encryptedPassword,
-      {
-        ...encryptOptions,
-        salt: Buffer.from(salt, 'base64'),
-      },
-    );
+    const isPasswordValid = await this.encryption.verify(password, encryptedPassword, {
+      ...encryptOptions,
+      salt: Buffer.from(salt, 'base64'),
+    });
 
     if (!isPasswordValid) {
       throw userUnauthorizedException();

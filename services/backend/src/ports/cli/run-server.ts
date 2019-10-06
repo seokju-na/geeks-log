@@ -1,7 +1,7 @@
-import { Command } from '@oclif/command';
+import { Command as CLICommand } from '@oclif/command';
 import { bootstrapServer } from '../server';
 
-export default class RunServer extends Command {
+export default class RunServer extends CLICommand {
   async run() {
     try {
       await bootstrapServer();

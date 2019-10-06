@@ -12,4 +12,3 @@ export class SignInWithEmailAndPasswordDto {
   @IsDefined()
   userAgent: string;
 }
-

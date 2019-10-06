@@ -1,40 +1,34 @@
+import { Dispatchable, DispatchableCreator } from '@geeks-log/event-system';
+import { CommandTypeOf, Event, matchType } from 'domain/core';
+import { QUERY_TYPE } from 'infra/cqrs/constants';
 import { Observable } from 'rxjs';
-import { Command, DomainEvent } from '../../domain/core';
 
-export type ISaga = (events: Observable<DomainEvent>) => Observable<any>;
+export type CommandHandler<
+  C extends DispatchableCreator = DispatchableCreator,
+  R extends Event[] = Event[]
+> = (command: CommandTypeOf<C>) => Promise<R>;
 
-export type ICommandHandler = (command: Command) => Promise<DomainEvent[]>;
-
-export abstract class Query {
-}
-
-export function isQuery(query: unknown): query is Query {
-  if (typeof query !== 'object' || query == null) {
-    return false;
-  }
-
-  return Object.getPrototypeOf(query.constructor.prototype) === Query.prototype;
-}
-
-export type IQueryHandler<Q extends Query = Query, R = any> = (query: Q) => Promise<R>;
-
-export interface BaseMetadata {
-  propertyKey: string | symbol;
-}
-
-export interface CommandHandlerMetadata extends BaseMetadata {
-  commandName: string;
-}
+export type Saga<R> = (events: Observable<Event>) => Observable<R>;
 
 export interface SagaOptions {
   /** @default true */
-  dispatchCommand?: boolean;
+  dispatch?: boolean;
 }
 
-export interface SagaMetadata extends BaseMetadata {
-  options: SagaOptions;
+export interface Query extends Dispatchable {}
+
+export interface TypedQuery<T extends string> extends Query {
+  readonly type: T;
 }
 
-export interface QueryHandlerMetadata extends BaseMetadata {
-  queryName: string;
+export type QueryTypeOf<T> = T extends DispatchableCreator<infer Type>
+  ? TypedQuery<Type> & ReturnType<T>
+  : never;
+
+export function isQuery(value: unknown): value is Query {
+  return matchType(value, QUERY_TYPE);
 }
+
+export type QueryHandler<C extends DispatchableCreator = DispatchableCreator, R = any> = (
+  query: QueryTypeOf<C>,
+) => R;

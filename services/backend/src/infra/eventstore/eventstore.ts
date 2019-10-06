@@ -1,5 +1,9 @@
 import { Observable } from 'rxjs';
-import { DomainEvent } from '../../domain/core';
+
+export interface EventLike {
+  type: string;
+  payload: any;
+}
 
 export const EVENTSTORE_TOKEN = 'infra.eventstore.EVENTSTORE';
 
@@ -9,6 +13,8 @@ export interface GetOptions {
    * @default 100000
    */
   timeout?: number;
+  /** @default 0 */
+  fromEventNumber?: number;
 }
 
 export enum ExpectedVersion {
@@ -23,10 +29,16 @@ export interface SaveOptions {
   expectedVersion?: ExpectedVersion | number;
 }
 
+export interface SaveResult {
+  firstEventNumber: number;
+  lastEventNumber: number;
+  commitPosition: number;
+}
+
 export interface Eventstore {
-  getById(streamId: string, options?: GetOptions): Promise<DomainEvent[]>;
+  getById(streamId: string, options?: GetOptions): Promise<EventLike[]>;
 
-  save(streamId: string, events: DomainEvent[], options?: SaveOptions): Promise<void>;
+  save(streamId: string, events: EventLike[], options?: SaveOptions): Promise<SaveResult>;
 
-  streamAsObservable(streamId: string): Observable<DomainEvent>;
+  streamAsObservable(streamId: string): Observable<EventLike>;
 }

@@ -21,15 +21,7 @@ const passportModule = PassportModule.register({ defaultStrategy: 'jwt' });
     UtilityModule,
     CacheModule,
   ],
-  providers: [
-    AuthService,
-    AuthStrategy,
-  ],
-  exports: [
-    passportModule,
-    AuthService,
-    AuthStrategy,
-  ],
+  providers: [AuthService, AuthStrategy],
+  exports: [passportModule, AuthService, AuthStrategy],
 })
-export class AuthModule {
-}
+export class AuthModule {}

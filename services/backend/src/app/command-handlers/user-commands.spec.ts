@@ -1,22 +1,22 @@
 import { EmailDummy } from '@geeks-log/testing';
 import { Test } from '@nestjs/testing';
-import { CreateLocalUserCommand } from '../../domain/user/commands';
-import { Eventstore, EVENTSTORE_TOKEN } from '../../infra/eventstore';
-import { Encryption } from '../../utility';
+import { createLocalUserCommand } from 'domain/user';
+import { Eventstore, EVENTSTORE_TOKEN } from 'infra/eventstore';
+import { Encryption } from 'utility/encryption';
 import { AppExceptionCodes } from '../exceptions';
-import { AppException } from '../shared/app-exception';
-import { UserService } from '../user-service';
+import { UserService } from '../services';
+import { AppException } from '../shared';
 import { UserCommands } from './user-commands';
 
 describe('app.commandHandlers.UserCommands', () => {
   let userService: UserService;
   let eventstore: Eventstore;
 
-  let commandHandler: UserCommands;
+  let commands: UserCommands;
 
   beforeEach(async () => {
-    userService = new (jest.fn());
-    eventstore = new (jest.fn());
+    userService = new (jest.fn())();
+    eventstore = new (jest.fn())();
 
     const module = await Test.createTestingModule({
       providers: [
@@ -27,19 +27,20 @@ describe('app.commandHandlers.UserCommands', () => {
       ],
     }).compile();
 
-    commandHandler = module.get(UserCommands);
+    commands = module.get(UserCommands);
   });
 
-  describe('#handleCreateLocalUserCommand', () => {
+  describe('#createLocalUser', () => {
     test('should throw "userEmailDuplicatedException" if email is not unique.', async () => {
       let error;
       const email = new EmailDummy().create();
 
-      userService.isUserEmailUnique = jest.fn()
+      userService.isUserEmailUnique = jest
+        .fn()
         .mockImplementationOnce(() => Promise.resolve(false));
 
       try {
-        const command = new CreateLocalUserCommand({
+        const command = createLocalUserCommand({
           email,
           username: 'username',
           encryptedPassword: 'password',
@@ -47,7 +48,7 @@ describe('app.commandHandlers.UserCommands', () => {
           userAgent: 'userAgent',
         });
 
-        await commandHandler.handleCreateLocalUserCommand(command);
+        await commands.createLocalUser(command);
       } catch (err) {
         error = err;
       }
@@ -64,7 +65,7 @@ describe('app.commandHandlers.UserCommands', () => {
       userService.isUsernameUnique = jest.fn().mockImplementationOnce(() => Promise.resolve(false));
 
       try {
-        const command = new CreateLocalUserCommand({
+        const command = createLocalUserCommand({
           email: 'seokju.me@gmail.com',
           username,
           encryptedPassword: 'password',
@@ -72,7 +73,7 @@ describe('app.commandHandlers.UserCommands', () => {
           userAgent: 'userAgent',
         });
 
-        await commandHandler.handleCreateLocalUserCommand(command);
+        await commands.createLocalUser(command);
       } catch (err) {
         error = err;
       }

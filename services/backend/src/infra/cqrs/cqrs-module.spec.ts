@@ -1,86 +1,44 @@
-import { fakeAsync, flush, tick } from '@geeks-log/testing';
+import { props } from '@geeks-log/event-system';
+import { fakeAsync, flush } from '@geeks-log/testing';
 import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { delay, map } from 'rxjs/operators';
-import { Command, DomainEvent } from '../../domain/core';
+import { createCommand, createEvent } from 'domain/core';
+import { map } from 'rxjs/operators';
 import { InfraException, isInfraException } from '../shared';
 import { Cqrs } from './cqrs';
 import { CqrsModule } from './cqrs-module';
-import { CommandHandler, Saga } from './decorators';
+import { createCommandHandler, createSaga } from './creators';
 import { CqrsExceptionCodes } from './exceptions';
-import { ISaga } from './interfaces';
 import { ofEventType } from './operators';
 
-class FooCommand extends Command {
-  public readonly name = 'foo';
-  public payload: any;
+const fooCommand = createCommand('foo', props<{ value: string }>());
+const barCommand = createCommand('bar', props<{ value: string }>());
+const notRegisteredCommand = createCommand('noteRegistered');
 
-  constructor() {
-    super();
-  }
-}
-
-class BarCommand extends Command {
-  public readonly name = 'bar';
-  public payload: any;
-
-  constructor() {
-    super();
-  }
-}
-
-class NotRegisteredCommand extends Command {
-  constructor() {
-    super();
-  }
-}
-
-interface FooEvent extends DomainEvent {
-  type: 'foo';
-  payload: any;
-}
-
-// noinspection JSUnusedLocalSymbols
-interface BarEvent extends DomainEvent {
-  type: 'bar';
-  payload: any;
-}
+const fooEvent = createEvent('foo', props<{ value: string }>());
+const barEvent = createEvent('bar', props<{ value: string }>());
 
 @Injectable()
 class FooAndBarCommandHandler {
-  @CommandHandler(FooCommand)
-  async handleFoo(command: FooCommand) {
-    return [
-      {
-        type: 'foo',
-        payload: command.payload,
-      },
-    ];
-  }
+  readonly handleFoo = createCommandHandler(fooCommand, async command => {
+    return [fooEvent({ value: command.value })];
+  });
 
-  @CommandHandler(BarCommand)
-  async handleBar(command: BarCommand) {
-    return [
-      {
-        type: 'bar',
-        payload: command.payload,
-      },
-    ];
-  }
+  readonly handlerBar = createCommandHandler(barCommand, async command => {
+    return [barEvent({ value: command.value })];
+  });
 }
 
 @Injectable()
 class FooAndBarSagas {
-  @Saga()
-  barOnFoo: ISaga = events => events.pipe(
-    ofEventType('foo'),
-    delay(100),
-    map((event: FooEvent) => {
-      const command = new BarCommand();
-      command.payload = event.payload;
-
-      return command;
-    }),
+  readonly barOnFoo = createSaga(events =>
+    events.pipe(
+      ofEventType(fooEvent),
+      map(event => {
+        console.log('saga', event);
+        return barCommand({ value: event.value });
+      }),
+    ),
   );
 }
 
@@ -90,8 +48,13 @@ describe('infra.cqrs', () => {
   describe('Cqrs', () => {
     beforeEach(async () => {
       const module = await Test.createTestingModule({
-        imports: [CqrsModule],
-        providers: [FooAndBarCommandHandler],
+        imports: [
+          CqrsModule.initialize({
+            commandHandlers: [FooAndBarCommandHandler],
+            sagas: [],
+            queryHandlers: [],
+          }),
+        ],
       }).compile();
 
       module.get(CqrsModule).onModuleInit();
@@ -99,12 +62,10 @@ describe('infra.cqrs', () => {
     });
 
     test('should returns events after execute command.', async () => {
-      let command: any = new FooCommand();
-      let events = await cqrs.executeCommand(command);
+      let events = await cqrs.executeCommand(fooCommand({ value: 'foo' }));
       expect(events[0].type).toEqual('foo');
 
-      command = new BarCommand();
-      events = await cqrs.executeCommand(command);
+      events = await cqrs.executeCommand(barCommand({ value: 'bar' }));
       expect(events[0].type).toEqual('bar');
     });
 
@@ -112,7 +73,7 @@ describe('infra.cqrs', () => {
       const spy = jest.fn();
       const subscription = cqrs.commands.subscribe(spy);
 
-      const command = new FooCommand();
+      const command = fooCommand({ value: 'foo' });
       await cqrs.executeCommand(command);
 
       expect(spy).toHaveBeenCalledWith(command);
@@ -120,7 +81,7 @@ describe('infra.cqrs', () => {
     });
 
     test('should throw exception if handler is not registered.', async () => {
-      const command = new NotRegisteredCommand();
+      const command = notRegisteredCommand();
       let error;
 
       try {
@@ -137,8 +98,13 @@ describe('infra.cqrs', () => {
   xdescribe('Saga', () => {
     beforeEach(async () => {
       const module = await Test.createTestingModule({
-        imports: [CqrsModule],
-        providers: [FooAndBarCommandHandler, FooAndBarSagas],
+        imports: [
+          CqrsModule.initialize({
+            commandHandlers: [FooAndBarCommandHandler],
+            queryHandlers: [],
+            sagas: [FooAndBarSagas],
+          }),
+        ],
       }).compile();
 
       module.get(CqrsModule).onModuleInit();
@@ -152,14 +118,8 @@ describe('infra.cqrs', () => {
       const sub1 = cqrs.commands.subscribe(commandSpy);
       const sub2 = cqrs.events.subscribe(eventsSpy);
 
-      const command = new FooCommand();
-      cqrs.executeCommand(command);
+      cqrs.executeCommand(fooCommand({ value: 'foo' }));
       flush();
-
-      tick(100);
-      flush();
-
-      console.log(commandSpy.mock.calls);
 
       sub1.unsubscribe();
       sub2.unsubscribe();

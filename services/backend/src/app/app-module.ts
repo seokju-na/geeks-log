@@ -1,21 +1,12 @@
 import { Module, Provider } from '@nestjs/common';
 import { UtilityModule } from '../utility';
-import { UserCommands } from './command-handlers';
-import { UserSagas } from './sagas';
-import { UserService } from './user-service';
+import { UserService } from './services';
 
-const providers: Provider[] = [
-  UserService,
-  UserCommands,
-  UserSagas,
-];
+const providers: Provider[] = [UserService];
 
 @Module({
-  imports: [
-    UtilityModule,
-  ],
+  imports: [UtilityModule],
   providers: providers,
   exports: providers,
 })
-export class AppModule {
-}
+export class AppModule {}

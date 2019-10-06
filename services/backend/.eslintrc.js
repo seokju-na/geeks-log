@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['../../.eslintrc.js'],
+  extends: ['../../.eslintrc.js', 'plugin:prettier/recommended'],
   rules: {
     'no-console': 'off',
     '@typescript-eslint/no-var-requires': 'off',

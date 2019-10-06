@@ -3,10 +3,7 @@ export const INFRA_EXCEPTION_NAME = 'InfraException';
 export class InfraException extends Error {
   public readonly name = INFRA_EXCEPTION_NAME;
 
-  constructor(
-    public readonly code: string,
-    errorMessage: string = code,
-  ) {
+  constructor(public readonly code: string, errorMessage: string = code) {
     super(errorMessage);
   }
 }

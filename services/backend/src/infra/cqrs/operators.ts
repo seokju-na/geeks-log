@@ -1,12 +1,11 @@
+import { DispatchableCreator } from '@geeks-log/event-system';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { DomainEvent } from '../../domain/core';
+import { Event, EventTypeOf } from 'domain/core';
 
-export function ofEventType<Input extends DomainEvent, Output extends DomainEvent>(
-  ...types: DomainEvent['type'][]
-) {
-  const isInstanceOf = (event: DomainEvent): event is Output =>
-    types.some(eventType => event.type === eventType);
+export function ofEventType<Output extends DispatchableCreator>(creator: Output) {
+  const isInstanceOf = (event: Event): event is EventTypeOf<Output> => event.type === creator.type;
 
-  return (source: Observable<Input>): Observable<Output> => source.pipe(filter(isInstanceOf));
+  return (source: Observable<Event>): Observable<EventTypeOf<Output>> =>
+    source.pipe(filter(isInstanceOf));
 }

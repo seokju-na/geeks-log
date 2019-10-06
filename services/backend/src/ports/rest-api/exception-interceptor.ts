@@ -9,22 +9,20 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { AppExceptionCodes } from 'app/exceptions';
+import { AppException, isAppException } from 'app/shared';
+import { AuthExceptionCodes } from 'infra/auth/exceptions';
+import { EventstoreExceptionCodes } from 'infra/eventstore/exceptions';
+import { InfraException, isInfraException } from 'infra/shared';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AppExceptionCodes } from '../../app/exceptions';
-import { AppException, isAppException } from '../../app/shared/app-exception';
-import { AuthExceptionCodes } from '../../infra/auth/exceptions';
-import { EventstoreExceptionCodes } from '../../infra/eventstore/exceptions';
-import { InfraException, isInfraException } from '../../infra/shared';
 
 @Injectable()
 export class ExceptionInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     return next
       .handle()
-      .pipe(
-        catchError(exception => throwError(this.transformException(exception))),
-      );
+      .pipe(catchError(exception => throwError(this.transformException(exception))));
   }
 
   private transformException(exception: unknown) {
@@ -32,9 +30,10 @@ export class ExceptionInterceptor implements NestInterceptor {
       return this.transformAppException(exception);
     } else if (isInfraException(exception)) {
       return this.transformInfraException(exception);
-    } else {
-      return new InternalServerErrorException();
+    } else if (typeof exception === 'object' && exception != null && !!(exception as any).status) {
+      return exception;
     }
+    return new InternalServerErrorException();
   }
 
   private transformAppException(exception: AppException) {

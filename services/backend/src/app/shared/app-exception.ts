@@ -3,10 +3,7 @@ export const APP_EXCEPTION_NAME = 'AppException';
 export class AppException extends Error {
   public readonly name = APP_EXCEPTION_NAME;
 
-  constructor(
-    public readonly code: string,
-    errorMessage: string = code,
-  ) {
+  constructor(public readonly code: string, errorMessage: string = code) {
     super(errorMessage);
   }
 }

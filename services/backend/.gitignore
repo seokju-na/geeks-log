@@ -1,5 +1,5 @@
 dist/
-.env
+*.env
 tmp/
 vendor/
 *.rdb

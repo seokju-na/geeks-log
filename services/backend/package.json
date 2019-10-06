@@ -9,17 +9,30 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && tsc -p tsconfig.build.json",
-    "dev": "concurrently --handle-input \"wait-on dist/main.js && nodemon\" \"tsc -w -p tsconfig.build.json\" ",
-    "dev:debug": "nodemon --config nodemon-debug.json",
+    "dev": "rimraf dist && webpack",
+    "dev:start": "node dist/dev",
     "start": "node dist/main",
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts'",
+    "prettier": "prettier --write 'src/**/*.ts'",
     "test": "yarn lint && yarn build && yarn test:unit && yarn test:e2e",
     "test:unit": "NODE_ENV=test jest",
     "test:e2e": "jest --config ./e2e-test/jest-e2e.json --passWithNoTests",
-    "deploy": "echo \"Not implement yet\"",
-    "start-redis": "vendor/redis-stable/src/redis-server"
+    "deploy": "echo \"Not implement yet\""
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "yarn prettier",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
+    "@geeks-log/event-system": "^0.1.0",
+    "@geeks-log/note": "^0.1.0",
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
     "@nestjs/jwt": "^6.1.1",
@@ -29,19 +42,24 @@
     "@oclif/config": "^1.13.2",
     "@oclif/errors": "^1.2.2",
     "@oclif/plugin-help": "^2.2.0",
+    "aws-sdk": "^2.525.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.9.1",
     "dotenv": "^8.0.0",
     "event-store-client": "^1.1.0",
     "globby": "^10.0.1",
+    "immer": "^4.0.0",
     "ioredis": "^4.14.0",
+    "klaw": "^3.0.0",
     "leveldown": "^5.1.1",
     "levelup": "^4.1.0",
+    "mime-types": "^2.1.24",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.12",
     "rimraf": "^2.6.2",
     "rxjs": "^6.3.3",
+    "rxjs-stream": "^3.0.2",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
@@ -50,8 +68,10 @@
     "@types/express": "^4.16.0",
     "@types/ioredis": "^4.0.13",
     "@types/jest": "^23.3.13",
+    "@types/klaw": "^3.0.0",
     "@types/leveldown": "^4.0.0",
     "@types/levelup": "^3.1.1",
+    "@types/mime-types": "^2.1.0",
     "@types/node": "^10.12.18",
     "@types/passport": "^1.0.0",
     "@types/passport-jwt": "^3.0.1",
@@ -59,20 +79,24 @@
     "@types/uuid": "^3.4.5",
     "@typescript-eslint/eslint-plugin": "^1.12.0",
     "@typescript-eslint/parser": "^1.12.0",
-    "concurrently": "^4.1.0",
     "eslint": "^5.0.0",
+    "eslint-config-prettier": "^6.3.0",
     "eslint-import-resolver-typescript": "^1.1.1",
     "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.7",
     "jest": "^24.8.0",
     "jest-marbles": "^2.4.1",
-    "nodemon": "^1.18.9",
-    "prettier": "^1.15.3",
+    "lint-staged": "^9.4.0",
+    "prettier": "^1.18.2",
     "supertest": "^3.4.1",
     "ts-jest": "24.0.2",
-    "ts-node": "8.1.0",
+    "ts-loader": "^6.2.0",
     "tsconfig-paths": "3.8.0",
     "typescript": "3.4.3",
-    "wait-on": "^3.2.0"
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9",
+    "webpack-node-externals": "^1.7.2"
   },
   "files": [
     "/bin",
@@ -111,7 +135,16 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^app/(.*)": "<rootDir>/app/$1",
+      "^domain/(.*)": "<rootDir>/domain/$1",
+      "^infra/(.*)": "<rootDir>/infra/$1",
+      "^ports/(.*)": "<rootDir>/ports/$1",
+      "^seed-work/(.*)": "<rootDir>/seed-work/$1",
+      "^testing/(.*)": "<rootDir>/testing/$1",
+      "^utility/(.*)": "<rootDir>/utility/$1"
+    }
   },
   "readme": "ERROR: No README data found!",
   "_id": "backend@0.5.3"

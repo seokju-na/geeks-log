@@ -12,4 +12,6 @@ export async function bootstrapServer() {
   server.useGlobalPipes(new ValidationPipe({ skipMissingProperties: true }));
 
   await server.listen(environment.serverPort);
+
+  return server;
 }

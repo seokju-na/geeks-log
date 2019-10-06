@@ -12,8 +12,6 @@ export class InvalidQueryHandlerError extends Error {
 
 export class InvalidSagaError extends Error {
   constructor() {
-    super(
-      `Invalid saga error. Each saga should return an Observable object`,
-    );
+    super(`Invalid saga error. Each saga should return an Observable object`);
   }
 }

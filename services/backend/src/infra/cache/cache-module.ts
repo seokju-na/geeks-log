@@ -4,12 +4,7 @@ import { provideRedisCache } from './redis';
 const cacheProvider = provideRedisCache();
 
 @Module({
-  providers: [
-    cacheProvider
-  ],
-  exports: [
-    cacheProvider
-  ],
+  providers: [cacheProvider],
+  exports: [cacheProvider],
 })
-export class CacheModule {
-}
+export class CacheModule {}

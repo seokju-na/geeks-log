@@ -35,9 +35,8 @@ export class RedisCache implements Cache {
     return !!result;
   }
 
-
   async hgetAll<T>(key: string) {
-    const value = await this.client.hgetall(key) as T;
+    const value = (await this.client.hgetall(key)) as T;
 
     // If value not exists, returns empty object.
     if (Object.keys(value).length === 0) {

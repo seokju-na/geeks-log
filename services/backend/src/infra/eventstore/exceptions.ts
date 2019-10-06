@@ -6,9 +6,9 @@ export enum EventstoreExceptionCodes {
 }
 
 export function streamDeletedException() {
-  return new InfraException('eventstore.streamDeleted');
+  return new InfraException(EventstoreExceptionCodes.STREAM_DELETED);
 }
 
 export function streamNotFoundException() {
-  return new InfraException('eventstore.streamNotFound');
+  return new InfraException(EventstoreExceptionCodes.STREAM_NOT_FOUND);
 }

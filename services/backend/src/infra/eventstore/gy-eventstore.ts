@@ -12,19 +12,20 @@ import {
 } from 'event-store-client';
 import { EMPTY, Observable } from 'rxjs';
 import { expand, last, map, scan, timeout } from 'rxjs/operators';
-import { createId, DomainEvent } from '../../domain/core';
+import { createId } from 'domain/core';
 import environment from '../../environment';
 import {
+  EventLike,
   Eventstore,
   EVENTSTORE_TOKEN,
   ExpectedVersion,
   GetOptions,
   SaveOptions,
+  SaveResult,
 } from './eventstore';
 import { streamDeletedException, streamNotFoundException } from './exceptions';
 
-const noop = () => {
-};
+const noop = () => {};
 
 interface InternalSingleReadOptions {
   /**
@@ -54,6 +55,7 @@ interface InternalMultipleReadOptions {
   pageSize?: number;
   eachTimeout?: number;
   totalTimeout?: number;
+  fromEventNumber?: number;
 }
 
 interface InternalWriteOptions {
@@ -93,11 +95,7 @@ export class GYEventstore implements Eventstore {
   private readonly credentials: ICredentials;
 
   constructor({
-    connectOptions: {
-      host = 'localhost',
-      port = 1113,
-      debug = false,
-    } = {},
+    connectOptions: { host = 'localhost', port = 1113, debug = false } = {},
     credentials,
   }: ConstructOptions) {
     this.connection = new Connection({ host, port, debug });
@@ -107,24 +105,22 @@ export class GYEventstore implements Eventstore {
   /**
    * Get all events from given stream.
    */
-  getById<E extends DomainEvent = DomainEvent>(
-    streamId: string,
-    options?: GetOptions,
-  ): Promise<E[]> {
-    const { pageSize, timeout: timeoutDue } = withDefaultGetOptions(options);
+  getById(streamId: string, options?: GetOptions) {
+    const { pageSize, timeout: timeoutDue, fromEventNumber } = withDefaultGetOptions(options);
 
-    const reduceAllEvents = this.readAllStreamEventsForward<E>(streamId, {
+    const reduceAllEvents = this.readAllStreamEventsForward(streamId, {
       pageSize,
       eachTimeout: timeoutDue,
+      fromEventNumber,
     }).pipe(
-      scan((accumulation, events) => accumulation.concat(events), [] as E[]),
+      scan<EventLike[]>((accumulation, events) => accumulation.concat(events), []),
       last(),
     );
 
     return reduceAllEvents.toPromise();
   }
 
-  async save(streamId: string, events: DomainEvent[], options?: SaveOptions) {
+  async save(streamId: string, events: EventLike[], options?: SaveOptions) {
     const { expectedVersion } = withDefaultSaveOptions(options);
 
     const eventsPayload: GYEvent[] = events.map(event => ({
@@ -134,48 +130,48 @@ export class GYEventstore implements Eventstore {
       metadata: {},
     }));
 
-    await this.writeStreamEvents(streamId, eventsPayload, { expectedVersion });
+    return await this.writeStreamEvents(streamId, eventsPayload, {
+      expectedVersion,
+    });
   }
 
   streamAsObservable(streamId: string) {
     return this.subscribeToStream(streamId);
   }
 
-  private readAllStreamEventsForward<E extends DomainEvent = DomainEvent>(
+  private readAllStreamEventsForward(
     streamId: string,
-    options: InternalMultipleReadOptions = {},
-  ): Observable<E[]> {
-    const {
-      pageSize = 100,
-      eachTimeout = 10000,
-    } = options;
+    options: InternalMultipleReadOptions,
+  ): Observable<EventLike[]> {
+    const { pageSize, eachTimeout, fromEventNumber } = options;
 
     const readNextIfExists = ({ isEndOfStream, nextEventNumber }: IReadStreamEventsCompleted) => {
       const hasNext = !isEndOfStream && nextEventNumber >= 0;
 
       return hasNext
         ? this.readStreamEventsForward(streamId, nextEventNumber, {
-          maxCount: pageSize,
-          timeout: eachTimeout,
-        })
+            maxCount: pageSize,
+            timeout: eachTimeout,
+          })
         : EMPTY;
     };
 
     const parseEvents = (result: IReadStreamEventsCompleted) =>
-      result.events.map((event: GYEvent) => ({
-        type: event.eventType,
-        payload: event.data,
-      } as E));
-
-    return this
-      .readStreamEventsForward(streamId, 0, {
-        maxCount: pageSize,
-        timeout: eachTimeout,
-      })
-      .pipe(
-        expand(readNextIfExists),
-        map(parseEvents),
+      result.events.map(
+        (event: GYEvent) =>
+          ({
+            type: event.eventType,
+            payload: event.data,
+          } as EventLike),
       );
+
+    return this.readStreamEventsForward(streamId, fromEventNumber, {
+      maxCount: pageSize,
+      timeout: eachTimeout,
+    }).pipe(
+      expand(readNextIfExists),
+      map(parseEvents),
+    );
   }
 
   private readStreamEventsForward(
@@ -190,7 +186,7 @@ export class GYEventstore implements Eventstore {
       timeout: timeoutDue = 10000,
     } = options;
 
-    const task = new Observable<IReadStreamEventsCompleted>((observer) => {
+    const task = new Observable<IReadStreamEventsCompleted>(observer => {
       function handleResult(completed: IReadStreamEventsCompleted) {
         const { result, error } = completed;
 
@@ -226,17 +222,20 @@ export class GYEventstore implements Eventstore {
     events: GYEvent[],
     options: InternalWriteOptions = {},
   ) {
-    const {
-      expectedVersion = ExpectedVersion.Any,
-      requireMaster = false,
-    } = options;
+    const { expectedVersion = ExpectedVersion.Any, requireMaster = false } = options;
 
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<SaveResult>((resolve, reject) => {
       function handleResult(completed: IWriteEventsCompleted) {
         const { result, message } = completed;
 
         if (result === OperationResult.Success) {
-          resolve();
+          const { firstEventNumber, lastEventNumber, commitPosition } = completed;
+
+          resolve({
+            firstEventNumber,
+            lastEventNumber,
+            commitPosition,
+          });
         } else if (result === OperationResult.StreamDeleted) {
           reject(streamDeletedException());
         } else {
@@ -256,7 +255,7 @@ export class GYEventstore implements Eventstore {
   }
 
   private subscribeToStream(streamId: string) {
-    return new Observable<DomainEvent>((observer) => {
+    return new Observable<EventLike>(observer => {
       const onEventAppeared = (event: StoredEvent) => {
         observer.next({
           type: event.eventType,
@@ -299,11 +298,11 @@ export function provideGYEventstore(): Provider {
   };
 }
 
-
 function withDefaultGetOptions(options?: GetOptions): GetOptions {
   return {
     pageSize: 100,
     timeout: 10000,
+    fromEventNumber: 0,
     ...options,
   };
 }
@@ -314,4 +313,3 @@ function withDefaultSaveOptions(options?: SaveOptions): SaveOptions {
     ...options,
   };
 }
-

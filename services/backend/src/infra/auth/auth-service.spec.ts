@@ -34,14 +34,10 @@ describe('infra.auth.AuthService', () => {
     test('should throw error if auth data is not exists in key-value-store.', async () => {
       let error = null;
 
-      mockCache.hgetAll =
-        jest.fn().mockImplementationOnce(() => Promise.resolve(null));
+      mockCache.hgetAll = jest.fn().mockImplementationOnce(() => Promise.resolve(null));
 
       try {
-        await authService.signInWithEmailAndPassword(
-          'seokju.me@gmail.com',
-          'password',
-        );
+        await authService.signInWithEmailAndPassword('seokju.me@gmail.com', 'password');
       } catch (err) {
         error = err;
       }
@@ -57,10 +53,7 @@ describe('infra.auth.AuthService', () => {
       encryption.verify = jest.fn().mockImplementationOnce(() => Promise.resolve(false));
 
       try {
-        await authService.signInWithEmailAndPassword(
-          userAuth.email,
-          'password',
-        );
+        await authService.signInWithEmailAndPassword(userAuth.email, 'password');
       } catch (err) {
         error = err;
       }

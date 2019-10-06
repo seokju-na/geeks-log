@@ -9,25 +9,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { UserLoginCommand } from '../../../domain/user/commands';
-import { AuthService } from '../../../infra/auth';
-import { UserAuth } from '../../../infra/auth/types';
-import { Cqrs } from '../../../infra/cqrs';
+import { userLoginCommand } from 'domain/user';
+import { AuthService } from 'infra/auth';
+import { UserAuth } from 'infra/auth/types';
+import { Cqrs } from 'infra/cqrs';
 import { SignInWithEmailAndPasswordDto } from '../dtos';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly cqrs: Cqrs,
-  ) {
-  }
+  constructor(private readonly authService: AuthService, private readonly cqrs: Cqrs) {}
 
   @Post('sign-in-local')
-  async signInWithEmailAndPassword(
-    @Body() dto: SignInWithEmailAndPasswordDto,
-    @Res() response,
-  ) {
+  async signInWithEmailAndPassword(@Body() dto: SignInWithEmailAndPasswordDto, @Res() response) {
     const { email, password, userAgent } = dto;
     let userAuthWithToken;
 
@@ -38,7 +31,7 @@ export class AuthController {
     }
 
     const { id, token, name } = userAuthWithToken;
-    const command = new UserLoginCommand({ id, userAgent });
+    const command = userLoginCommand({ id, userAgent });
 
     await this.cqrs.executeCommand(command);
 

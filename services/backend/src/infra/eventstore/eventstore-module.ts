@@ -4,12 +4,7 @@ import { provideGYEventstore } from './gy-eventstore';
 const eventstoreProvider = provideGYEventstore();
 
 @Module({
-  providers: [
-    eventstoreProvider,
-  ],
-  exports: [
-    eventstoreProvider,
-  ],
+  providers: [eventstoreProvider],
+  exports: [eventstoreProvider],
 })
-export class EventstoreModule {
-}
+export class EventstoreModule {}

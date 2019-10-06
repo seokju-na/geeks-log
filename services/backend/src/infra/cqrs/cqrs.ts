@@ -1,31 +1,24 @@
-import { Injectable, Type } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { Injectable } from '@nestjs/common';
+import { Command, CommandExecutor, Event } from 'domain/core';
 import { Subject } from 'rxjs';
-import { Command, CommandExecutor, DomainEvent, ReturnEventsOf } from '../../domain/core';
-import { COMMAND_HANDLER_METADATA_TOKEN, QUERY_HANDLER_METADATA_TOKEN } from './constants';
-import { InvalidCommandHandlerError, InvalidQueryHandlerError } from './errors';
+import { InvalidCommandHandlerError, InvalidQueryHandlerError } from './internal-errors';
 import { commandHandlerNotFoundException, queryHandlerNotFoundException } from './exceptions';
-import {
-  BaseMetadata,
-  CommandHandlerMetadata,
-  ICommandHandler,
-  IQueryHandler,
-  Query,
-  QueryHandlerMetadata,
-} from './interfaces';
+import { CommandHandler, Query, QueryHandler } from './interfaces';
+import { COMMAND_HANDLER_METADATA_TOKEN, QUERY_HANDLER_METADATA_TOKEN } from './tokens';
 
-type WithHandler<T extends BaseMetadata> = T & { handler: ICommandHandler };
+interface HandlerWithType<T> {
+  type: string;
+  handler?: T;
+}
 
 @Injectable()
 export class Cqrs {
   private readonly _commands = new Subject<Command>();
-  private readonly _events = new Subject<DomainEvent[]>();
+  private readonly _events = new Subject<Event[]>();
   private readonly _queries = new Subject<Query>();
-  private readonly commandHandlers = new Map<string, ICommandHandler>();
-  private readonly queryHandlers = new Map<string, IQueryHandler>();
 
-  constructor(private readonly moduleRef: ModuleRef) {
-  }
+  private readonly commandHandlers = new Map<string, CommandHandler>();
+  private readonly queryHandlers = new Map<string, QueryHandler>();
 
   get commands() {
     return this._commands.asObservable();
@@ -39,8 +32,8 @@ export class Cqrs {
     return this._queries.asObservable();
   }
 
-  async executeCommand<Executor extends CommandExecutor, C extends Command = Command>(command: C) {
-    const handler = this.commandHandlers.get(this.getCommandOrQueryName(command));
+  async executeCommand<Executor extends CommandExecutor>(command: Command) {
+    const handler = this.commandHandlers.get(command.type);
 
     if (handler === undefined) {
       throw commandHandlerNotFoundException();
@@ -51,11 +44,11 @@ export class Cqrs {
     const events = await handler(command);
     this._events.next(events);
 
-    return events as ReturnEventsOf<Executor>;
+    return events as ReturnType<Executor>;
   }
 
-  async executeQuery<Result = any, Q extends Query = Query>(query: Q) {
-    const handler = this.queryHandlers.get(this.getCommandOrQueryName(query));
+  async executeQuery<Result>(query: Query) {
+    const handler = this.queryHandlers.get(query.type);
 
     if (handler === undefined) {
       throw queryHandlerNotFoundException();
@@ -67,63 +60,56 @@ export class Cqrs {
     return result as Result;
   }
 
-  _registerCommandHandlers(types: Type<any>[] = []) {
-    const handlers = types
-      .map(target => this.reflectMetadataWithHandler<CommandHandlerMetadata>(
-        COMMAND_HANDLER_METADATA_TOKEN,
-        target,
-      ))
+  _registerCommandHandlers(instances: object[] = []) {
+    const handlers = instances
+      .map(target =>
+        this.reflectMetadataWithHandler<CommandHandler>(COMMAND_HANDLER_METADATA_TOKEN, target),
+      )
       .reduce((a, b) => a.concat(b), []);
 
-    handlers.forEach(({ handler, commandName }) => {
+    handlers.forEach(({ handler, type }) => {
       if (typeof handler !== 'function') {
         throw new InvalidCommandHandlerError();
       }
 
-      this.commandHandlers.set(commandName, handler);
+      this.commandHandlers.set(type, handler);
     });
   }
 
-  _registerQueryHandlers(types: Type<any>[] = []) {
-    const handlers = types
-      .map(target => this.reflectMetadataWithHandler<QueryHandlerMetadata>(
-        QUERY_HANDLER_METADATA_TOKEN,
-        target,
-      ))
+  _registerQueryHandlers(instances: object[] = []) {
+    const handlers = instances
+      .map(target =>
+        this.reflectMetadataWithHandler<QueryHandler>(QUERY_HANDLER_METADATA_TOKEN, target),
+      )
       .reduce((a, b) => a.concat(b), []);
 
-    handlers.forEach(({ handler, queryName }) => {
+    handlers.forEach(({ handler, type }) => {
       if (typeof handler !== 'function') {
         throw new InvalidQueryHandlerError();
       }
 
-      this.queryHandlers.set(queryName, handler);
+      this.queryHandlers.set(type, handler);
     });
   }
 
-  private getCommandOrQueryName(commandOrQuery: Command | Query) {
-    const { constructor } = Object.getPrototypeOf(commandOrQuery);
-    return constructor.name as string;
-  }
-
-  private reflectMetadataWithHandler<T extends BaseMetadata>(
+  private reflectMetadataWithHandler<T>(
     metadataToken: string,
-    target: Type<any>,
-  ): WithHandler<T>[] {
-    const metadata: T[] = Reflect.getMetadata(metadataToken, target) || [];
-    const instance = this.moduleRef.get(target, { strict: false });
-
+    instance: object,
+  ): HandlerWithType<T>[] {
     if (!instance) {
       return [];
     }
 
-    return metadata.map(m => {
-      const method = instance[m.propertyKey];
-
-      return {
-        ...m,
-        handler: typeof method === 'function' ? method.bind(instance) : undefined,
-      };
-    });
+    return Object.entries(instance)
+      .filter(
+        ([, handler]) => typeof handler === 'function' && handler.hasOwnProperty(metadataToken),
+      )
+      .map(([, handler]) => {
+        const type = handler[metadataToken] as string;
+        return {
+          type,
+          handler: typeof handler === 'function' ? handler.bind(instance) : undefined,
+        };
+      });
   }
 }

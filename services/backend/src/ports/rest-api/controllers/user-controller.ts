@@ -1,12 +1,16 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { UserService } from '../../../app';
-import { userEmailDuplicatedException, usernameDuplicatedException } from '../../../app/exceptions';
-import { CreateLocalUserCommand, execCreateLocalUserCommand } from '../../../domain/user/commands';
-import { LocalUserCreatedEvent } from '../../../domain/user/events';
+import { userEmailDuplicatedException, usernameDuplicatedException } from 'app/exceptions';
+import { UserService } from 'app/services';
+import { EventTypeOf } from 'domain/core';
+import {
+  createLocalUserCommand,
+  execCreateLocalUserCommand,
+  localUserCreatedEvent,
+} from 'domain/user';
+import { AuthService } from 'infra/auth';
+import { Cqrs } from 'infra/cqrs';
+import { Encryption } from 'utility/encryption';
 import environment from '../../../environment';
-import { AuthService } from '../../../infra/auth';
-import { Cqrs } from '../../../infra/cqrs';
-import { Encryption } from '../../../utility';
 import { CreateLocalUserDto } from '../dtos';
 import { FindUserByEmailQuery, FindUserByNameQuery } from '../queries';
 
@@ -19,37 +23,31 @@ export class UserController {
     private readonly encryption: Encryption,
     private readonly authService: AuthService,
     private readonly userService: UserService,
-  ) {
-  }
+  ) {}
 
   @Get('check-email')
   async checkUserEmailIsUnique(@Query() query: FindUserByEmailQuery) {
-    if (!await this.userService.isUserEmailUnique(query.email)) {
+    if (!(await this.userService.isUserEmailUnique(query.email))) {
       throw userEmailDuplicatedException();
     }
   }
 
   @Get('check-username')
   async checkUsernameIsUnique(@Query() query: FindUserByNameQuery) {
-    if (!await this.userService.isUsernameUnique(query.username)) {
+    if (!(await this.userService.isUsernameUnique(query.username))) {
       throw usernameDuplicatedException();
     }
   }
 
   @Post()
   async createLocalUser(@Body() dto: CreateLocalUserDto) {
-    const {
-      email,
-      password,
-      username,
-      userAgent,
-    } = dto;
+    const { email, password, username, userAgent } = dto;
 
     // Encrypt password
     const { salt, encryptedPassword } = await this.encryptPassword(password);
 
     // Execute command
-    const command = new CreateLocalUserCommand({
+    const command = createLocalUserCommand({
       email,
       username,
       encryptedPassword,
@@ -70,14 +68,8 @@ export class UserController {
     return { salt: saltBuf.toString('base64'), encryptedPassword };
   }
 
-  private async ensureUserAuthFromEvent(event: LocalUserCreatedEvent) {
-    const {
-      id,
-      email,
-      username,
-      encryptedPassword,
-      salt,
-    } = event.payload;
+  private async ensureUserAuthFromEvent(event: EventTypeOf<typeof localUserCreatedEvent>) {
+    const { id, email, username, encryptedPassword, salt } = event;
 
     await this.authService.putLocalUserInfo({
       id,
@@ -88,6 +80,8 @@ export class UserController {
     });
 
     const token = await this.authService.createToken({ username, email });
+    console.log(token);
+    console.log('hello');
 
     return {
       id,

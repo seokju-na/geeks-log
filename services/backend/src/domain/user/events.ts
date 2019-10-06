@@ -1,26 +1,20 @@
-import { DomainEvent } from '../core';
+import { props } from '@geeks-log/event-system';
+import { createEvent } from '../core';
+import { UserId } from './types';
 
-export enum UserEventTypes {
-  USER_LOGGED_IN = 'user.loggedIn',
-  LOCAL_USER_CREATED = 'user.localUserCreated',
-}
+export const userLoggedInEvent = createEvent(
+  'user.loggedIn',
+  props<{ timestamp: string; userAgent: string }>(),
+);
 
-export interface UserLoggedInEvent extends DomainEvent {
-  type: UserEventTypes.USER_LOGGED_IN;
-  payload: {
-    timestamp: string;
-    userAgent: string;
-  };
-}
-
-export interface LocalUserCreatedEvent extends DomainEvent {
-  type: UserEventTypes.LOCAL_USER_CREATED;
-  payload: {
-    id: string;
+export const localUserCreatedEvent = createEvent(
+  'user.localUserCrated',
+  props<{
+    id: UserId;
     email: string;
     username: string;
     encryptedPassword: string;
     salt: string;
     timestamp: string;
-  };
-}
+  }>(),
+);

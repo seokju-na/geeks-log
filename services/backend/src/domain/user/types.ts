@@ -1,3 +1,11 @@
+import { createId } from 'domain/core';
+
+export type UserId = string;
+
+export function createUserId(): UserId {
+  return `user-${createId()}`;
+}
+
 export type OAuthProvider = 'github' | 'google' | 'facebook' | 'twitter';
 
 interface UserBase {
