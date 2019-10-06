@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Backend service for geeks log",
   "author": {
     "name": "Seokju Na",
@@ -147,5 +147,5 @@
     }
   },
   "readme": "ERROR: No README data found!",
-  "_id": "backend@0.5.3"
+  "_id": "backend@0.6.0"
 }
