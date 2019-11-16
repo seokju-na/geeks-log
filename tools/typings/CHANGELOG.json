@@ -1,0 +1,22 @@
+{
+  "name": "@geeks-log/typings",
+  "entries": [
+    {
+      "version": "0.1.0",
+      "tag": "@geeks-log/typings_v0.1.0",
+      "date": "Sat, 16 Nov 2019 12:06:07 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add description for package"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "Add license"
+          }
+        ]
+      }
+    }
+  ]
+}
