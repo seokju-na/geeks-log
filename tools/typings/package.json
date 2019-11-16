@@ -1,6 +1,6 @@
 {
   "name": "@geeks-log/typings",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Typings for geeks log project.",
   "types": "types/",
   "license": "MIT",
